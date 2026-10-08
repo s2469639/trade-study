@@ -72,3 +72,4 @@ trade_study/
   - **산업 섬 추가하는 법**: `data/industries.json` 에 산업 하나를 같은 모양으로 추가하고 `icon`, `region`, `map`(x, y, shape 0~2, color)을 적으면 지도에 자동으로 나타나요. 퀴즈는 `data/quiz.json`, 면접 질문은 `data/interview.json`, 기업은 `data/companies.json`, 군도 이름은 `data/map.json`.
   - 새 아이콘이 필요하면 `templates/_icons.html` 에 symbol 을 추가해요.
   - **섬 숨기기/되살리기**: `data/industries.json` 의 산업에 `"hidden": true` 를 적으면 지도와 목록에서 빠져요 (딸린 기업·면접 질문도 같이). 데이터는 그대로 남아 있어서 줄을 지우면 다시 나타나요. 지금 `철강`이 숨겨져 있어요.
+  - **지도 그림**: 위쪽은 하늘(해, 구름, 새), 수평선 아래는 바다예요. 섬에는 옆면(두께), 물에 닿는 거품, 그림자가 있어요. 장식은 `templates/_map.html` 에서 바꿔요.

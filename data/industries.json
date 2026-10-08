@@ -122,7 +122,7 @@
     "region": "west",
     "map": {
       "x": 190,
-      "y": 160,
+      "y": 228,
       "shape": 0,
       "color": "#FFF1B8"
     }
@@ -245,8 +245,8 @@
     "icon": "battery",
     "region": "west",
     "map": {
-      "x": 100,
-      "y": 370,
+      "x": 108,
+      "y": 428,
       "shape": 1,
       "color": "#DDF3E3"
     }
@@ -369,8 +369,8 @@
     "icon": "car",
     "region": "west",
     "map": {
-      "x": 295,
-      "y": 375,
+      "x": 322,
+      "y": 432,
       "shape": 2,
       "color": "#D9EDFD"
     }
@@ -494,7 +494,7 @@
     "region": "heavy",
     "map": {
       "x": 600,
-      "y": 150,
+      "y": 228,
       "shape": 0,
       "color": "#D9EDFD"
     }
@@ -618,7 +618,7 @@
     "region": "heavy",
     "map": {
       "x": 500,
-      "y": 365,
+      "y": 430,
       "shape": 1,
       "color": "#E9ECEF"
     },
@@ -743,7 +743,7 @@
     "region": "heavy",
     "map": {
       "x": 600,
-      "y": 375,
+      "y": 432,
       "shape": 2,
       "color": "#FFE8CC"
     }
@@ -867,7 +867,7 @@
     "region": "life",
     "map": {
       "x": 1010,
-      "y": 160,
+      "y": 228,
       "shape": 0,
       "color": "#FFE3EC"
     }
@@ -990,8 +990,8 @@
     "sample": true,
     "region": "life",
     "map": {
-      "x": 900,
-      "y": 370,
+      "x": 878,
+      "y": 428,
       "shape": 1,
       "color": "#FFE8CC"
     }
@@ -1115,7 +1115,7 @@
     "region": "life",
     "map": {
       "x": 1090,
-      "y": 375,
+      "y": 432,
       "shape": 2,
       "color": "#EDE7FF"
     }

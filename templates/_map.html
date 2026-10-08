@@ -21,24 +21,30 @@
   <div class="map-tip" id="mapTip" hidden></div>
 
   <svg class="map" id="worldMap" viewBox="0 0 1200 730" role="img" aria-label="월드맵">
-    {# ---- 바다 장식 (움직이는 건 필터 없이 그려서 흔들리지 않게) ---- #}
+    {# ---- 하늘과 바다 (수평선 위는 하늘, 아래는 바다) ---- #}
+    <rect class="sky" x="0" y="0" width="1200" height="110"/>
+    <path class="sea" d="M0 104 C 160 96, 340 112, 520 104 S 900 96, 1200 106 V 600 H0 Z"/>
+    <path class="horizon" d="M0 104 C 160 96, 340 112, 520 104 S 900 96, 1200 106"/>
     <g aria-hidden="true">
-      <g class="sun" transform="translate(74,78)">
-        <g class="rays">{% for a in range(0, 360, 45) %}<path d="M0 -38 V-50" transform="rotate({{ a }})"/>{% endfor %}</g>
-        <circle r="27"/>
-      </g>
-      <g transform="translate(330,90)"><g class="cloud c1"><path d="M0 26 Q-4 8 16 10 Q22 -6 42 4 Q62 0 64 20 Q78 22 72 32 H6 Q-8 32 0 26 Z"/></g></g>
-      <g transform="translate(790,100)"><g class="cloud c2"><path d="M0 24 Q-4 8 14 10 Q20 -4 38 4 Q56 0 58 18 Q70 20 66 30 H6 Q-6 30 0 24 Z"/></g></g>
-      <g transform="translate(1100,4)"><g class="cloud c3"><path d="M0 20 Q-3 6 12 8 Q17 -3 31 3 Q45 0 47 14 Q57 15 54 23 H5 Q-5 23 0 20 Z"/></g></g>
-      <path class="route" d="M70 462 C 290 520, 470 430, 700 480 S 1040 440, 1160 470"/>
-      {% for bx, by in [(420, 240), (880, 250)] %}<g transform="translate({{ bx }},{{ by }})"><path class="bird" style="animation-delay:-{{ loop.index }}s" d="M0 0 q8 -9 16 0 q8 -9 16 0"/></g>{% endfor %}
-      <g class="whale" transform="translate(790,455)">
+      {# 하늘: 해, 구름, 새 #}
+      <g transform="translate(74,54)"><g class="sun">
+        <g class="rays">{% for a in range(0, 360, 45) %}<path d="M0 -30 V-40" transform="rotate({{ a }})"/>{% endfor %}</g>
+        <circle r="21"/>
+      </g></g>
+      <g transform="translate(300,22)"><g class="cloud c1"><path d="M0 26 Q-4 8 16 10 Q22 -6 42 4 Q62 0 64 20 Q78 22 72 32 H6 Q-8 32 0 26 Z"/></g></g>
+      <g transform="translate(930,34)"><g class="cloud c2"><path d="M0 24 Q-4 8 14 10 Q20 -4 38 4 Q56 0 58 18 Q70 20 66 30 H6 Q-6 30 0 24 Z"/></g></g>
+      <g transform="translate(1110,8)"><g class="cloud c3"><path d="M0 20 Q-3 6 12 8 Q17 -3 31 3 Q45 0 47 14 Q57 15 54 23 H5 Q-5 23 0 20 Z"/></g></g>
+      {% for bx, by in [(520, 52), (700, 36)] %}<g transform="translate({{ bx }},{{ by }})"><path class="bird" style="animation-delay:-{{ loop.index }}s" d="M0 0 q8 -9 16 0 q8 -9 16 0"/></g>{% endfor %}
+      {# 바다: 잔물결, 항로, 고래, 물고기, 윤슬 #}
+      {% for wx, wy in [(40,160),(380,150),(820,150),(1130,170),(50,300),(410,330),(790,225),(1160,340),(240,540),(660,545),(1000,545)] %}<path class="wave" style="animation-delay:-{{ loop.index * 0.6 }}s" d="M{{ wx }} {{ wy }} q7 -8 14 0 t14 0 t14 0"/>{% endfor %}
+      <path class="route" d="M70 548 C 290 566, 470 530, 700 552 S 1040 530, 1160 548"/>
+      <g class="whale" transform="translate(330,232)">
         <g class="spout"><path d="M82 -6 q-4 -14 -14 -20"/><path d="M82 -6 q4 -14 14 -20"/><path d="M82 -6 V-24"/></g>
         <path class="body" d="M0 24 C0 -6 54 -16 86 2 C98 -6 116 -8 128 -4 C120 4 116 14 122 24 C106 20 98 26 92 32 C58 54 0 52 0 24 Z"/>
         <circle class="eye" cx="30" cy="20" r="3"/>
       </g>
-      {% for fx, fy in [(250, 520), (1010, 520)] %}<g transform="translate({{ fx }},{{ fy }})"><g class="fish" style="animation-delay:-{{ loop.index * 1.3 }}s"><ellipse cx="0" cy="0" rx="14" ry="8"/><path d="M14 0 L24 -8 V8 Z"/><circle cx="-6" cy="-2" r="1.6" class="eye"/></g></g>{% endfor %}
-      {% for sx, sy in [(540, 215), (130, 255), (960, 245), (1130, 130)] %}<g transform="translate({{ sx }},{{ sy }})"><path class="twinkle" style="animation-delay:-{{ loop.index * 0.8 }}s" d="M0 -9 Q1 -1 9 0 Q1 1 0 9 Q-1 1 -9 0 Q-1 -1 0 -9 Z"/></g>{% endfor %}
+      {% for fx, fy in [(448, 452), (752, 372)] %}<g transform="translate({{ fx }},{{ fy }})"><g class="fish" style="animation-delay:-{{ loop.index * 1.3 }}s"><ellipse cx="0" cy="0" rx="14" ry="8"/><path d="M14 0 L24 -8 V8 Z"/><circle cx="-6" cy="-2" r="1.6" class="eye"/></g></g>{% endfor %}
+      {% for sx, sy in [(470, 340), (250, 520), (780, 300), (1150, 300)] %}<g transform="translate({{ sx }},{{ sy }})"><path class="glint" style="animation-delay:-{{ loop.index * 0.8 }}s" d="M0 0 h18 M4 7 h10"/></g>{% endfor %}
     </g>
 
     {# ---- 군도 이름 ---- #}
@@ -51,10 +57,18 @@
       {% set got = sts | selectattr('done') | list | length %}
       {% set fog = isl.id not in visited %}
       <a class="spot island {{ 'fog' if fog }} {{ 'done' if got == 5 }}" href="{{ url_for('industry', id=isl.id) }}" data-key="{{ isl.id }}"
-         data-x="{{ m.x }}" data-y="{{ m.y + 84 }}" data-name="{{ isl.name }}" data-tag="{{ isl.tagline }}" data-got="{{ got }}">
+         data-x="{{ m.x }}" data-y="{{ m.y + 116 }}" data-name="{{ isl.name }}" data-tag="{{ isl.tagline }}" data-got="{{ got }}">
         <title>{{ isl.name }} · 스탬프 {{ got }}/5</title>
         <g transform="translate({{ m.x }},{{ m.y }})">
-          <g class="isle-shape" style="filter:url(#wobble2)"><path d="{{ shapes[m.shape % 3] }}" transform="scale({{ m.scale or 0.76 }})" style="fill:{{ m.color }}"/></g>
+          <ellipse class="isle-shadow" cx="6" cy="86" rx="104" ry="17"/>
+          <path class="ripple r1" d="M-108 78 Q0 122 108 78"/>
+          <path class="ripple r2" d="M-86 94 Q0 118 86 94"/>
+          <g class="isle-shape" style="filter:url(#wobble2)">
+            <g transform="scale({{ m.scale or 1 }})">
+              <g transform="translate(0,14)"><path class="side" d="{{ shapes[m.shape % 3] }}"/></g>
+              <path class="top" d="{{ shapes[m.shape % 3] }}" style="fill:{{ m.color }}"/>
+            </g>
+          </g>
           <use class="ico map-ico" href="#i-{{ isl.icon }}" x="-27" y="-54" width="54" height="54"/>
           <text class="isle-name" y="22">{{ isl.name }}</text>
           {% for st in sts %}<use class="ico star {{ '' if st.done else 'empty' }}" href="#i-star" x="{{ -50 + loop.index0 * 20 }}" y="29" width="19" height="19"/>{% endfor %}
