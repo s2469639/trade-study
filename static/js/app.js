@@ -276,3 +276,7 @@ document.querySelectorAll("[data-count]").forEach((el) => {
     });
   });
 })();
+
+// 폰트가 늦게 불러와져 글자 폭이 달라지면 탭 박스 위치를 다시 맞춘다
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => dispatchEvent(new Event("resize")));
+addEventListener("load", () => dispatchEvent(new Event("resize")));

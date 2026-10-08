@@ -287,7 +287,7 @@ details > summary { cursor: pointer; }
 .term .check { margin-top: auto; align-self: flex-start; }
 
 .stat { text-align: center; padding: 22px 12px; }
-.stat .num { font-family: var(--font-title); font-size: 2.8rem; line-height: 1.1; }
+.stat .num { font-family: "Jua", "Pretendard", sans-serif; font-size: 2.8rem; line-height: 1.1; }
 .stat .num small { font-size: 1.1rem; color: var(--gray); }
 .stat .cap { color: #666; }
 
@@ -312,7 +312,7 @@ details > summary { cursor: pointer; }
 .kv dt { color: var(--gray); }
 .kv dd { margin: 0; }
 
-.timer { font-family: var(--font-title); font-size: 1.8rem; font-variant-numeric: tabular-nums; }
+.timer { font-family: "Jua", "Pretendard", sans-serif; font-size: 1.8rem; font-variant-numeric: tabular-nums; }
 .question-box { font-family: var(--font-title); font-size: 1.65rem; line-height: 1.5; }
 .question-box.swap { animation: rise .45s var(--spring); }
 .sticky-note { background: var(--yellow); border: 2.5px solid var(--ink); border-radius: 4px 4px 16px 4px; padding: 6px 16px; transform: rotate(-1.5deg); display: inline-block; transition: transform .35s var(--spring); }
