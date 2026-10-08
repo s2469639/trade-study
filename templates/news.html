@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% from "_macros.html" import del_btn %}
+{% block title %}뉴스 & 시사 · 무역공부노트{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h1>📰 뉴스 & 시사</h1>
+  <p>뉴스를 읽고 끝내지 말고, 배경지식과 '왜 중요한지'까지 내 말로 적어요.</p>
+</div>
+
+<div class="grid cols-2" style="align-items:start">
+  <div class="card yellow">
+    <h2>뉴스 저장하기</h2>
+    <form data-collection="news">
+      <div class="field"><label>기사 제목 *</label><input type="text" name="title" required></div>
+      <div class="form-grid">
+        <div class="field"><label>링크</label><input type="url" name="url" placeholder="https://"></div>
+        <div class="field"><label>분류</label>
+          <select name="category"><option>산업 뉴스</option><option>무역·경제</option><option>해외시장 이슈</option></select>
+        </div>
+        <div class="field"><label>관련 산업</label>
+          <select name="industry"><option value="">없음</option>{% for i in industries_all %}<option value="{{ i.id }}">{{ i.name }}</option>{% endfor %}</select>
+        </div>
+        <div class="field"><label>관련 기업</label>
+          <select name="company_id"><option value="">없음</option>{% for c in companies %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}</select>
+        </div>
+      </div>
+      <div class="field"><label>① 한 줄 요약</label><textarea name="summary" required style="min-height:70px" placeholder="무슨 일이 일어났나?"></textarea></div>
+      <div class="field"><label>② 배경지식 (알아야 이해되는 것)</label><textarea name="background" style="min-height:70px" placeholder="왜 이런 일이 생겼나? 관련 개념은?"></textarea></div>
+      <div class="field"><label>③ 이 뉴스가 산업/무역에 왜 중요한가?</label><textarea name="why" style="min-height:70px" placeholder="누구에게 어떤 영향? 해외영업 관점에서는?"></textarea></div>
+      <div class="field"><label>모르는 용어 (모르는 것 목록에도 자동 저장)</label><input type="text" name="_unknown" placeholder="예) 상계관세"></div>
+      <button class="btn" type="submit">뉴스 저장 📌</button>
+    </form>
+  </div>
+
+  <div>
+    <div class="filter-bar" data-target="#newsList">
+      <input class="search" type="text" data-target="#newsList" placeholder="🔍 뉴스 검색">
+      <button class="chip active" data-key="category" data-value="">전체</button>
+      <button class="chip" data-key="category" data-value="산업 뉴스">산업</button>
+      <button class="chip" data-key="category" data-value="무역·경제">무역·경제</button>
+      <button class="chip" data-key="category" data-value="해외시장 이슈">해외시장</button>
+    </div>
+    <div id="newsList">
+      {% for n in items %}
+        <div class="card filterable" data-category="{{ n.category }}" style="margin-bottom:16px">
+          <div class="card-title-row">
+            <div class="row">
+              <span class="tag yellow">{{ n.category }}</span>
+              {% if n.industry %}<span class="tag">{{ industries_all | selectattr('id', 'equalto', n.industry) | map(attribute='name') | first }}</span>{% endif %}
+            </div>
+            {{ del_btn('news', n.id) }}
+          </div>
+          <h3>{% if n.url %}<a href="{{ n.url }}" target="_blank" rel="noopener">{{ n.title }}</a>{% else %}{{ n.title }}{% endif %}</h3>
+          <dl class="kv">
+            <dt>① 요약</dt><dd>{{ n.summary }}</dd>
+            {% if n.background %}<dt>② 배경지식</dt><dd>{{ n.background }}</dd>{% endif %}
+            {% if n.why %}<dt>③ 왜 중요?</dt><dd>{{ n.why }}</dd>{% endif %}
+          </dl>
+          <div class="item-meta">{{ n.date }}</div>
+        </div>
+      {% else %}
+        <div class="empty">저장한 뉴스가 없어요.<br>왼쪽에 기사 하나를 정리해볼까요? ✏️</div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% from "_macros.html" import del_btn %}
+{% block title %}글쓰기 · 무역공부노트{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h1>✍️ 글쓰기 공부</h1>
+  <p>잘 쓴 글을 뜯어보고, 내 생각을 써보고, 좋은 표현은 모아둬요.</p>
+</div>
+
+<div class="tab-group">
+  <div class="tabs" data-tabs="tab">
+    <button class="tab" data-tab="read">📖 사설·칼럼 읽기</button>
+    <button class="tab" data-tab="write">🖊️ 내 글 쓰기</button>
+    <button class="tab" data-tab="phrases">⭐ 표현·논리 노트</button>
+  </div>
+
+  {# ---------- 사설 읽기 ---------- #}
+  <div class="tab-panel" data-panel="read">
+    <div class="grid cols-2" style="align-items:start">
+      <div class="card yellow">
+        <h2>사설 정리하기</h2>
+        <form data-collection="writings" data-extra='{"kind":"editorial"}'>
+          <div class="field"><label>제목 *</label><input type="text" name="title" required></div>
+          <div class="field"><label>링크</label><input type="url" name="url" placeholder="https://"></div>
+          <div class="field"><label>① 핵심 주장 (한 문장)</label><textarea name="claim" style="min-height:64px"></textarea></div>
+          <div class="field"><label>② 근거 (사실·수치·사례)</label><textarea name="evidence" placeholder="- 근거 1&#10;- 근거 2"></textarea></div>
+          <div class="field"><label>③ 내 생각 (동의? 반박? 덧붙일 것?)</label><textarea name="my_opinion"></textarea></div>
+          <button class="btn" type="submit">사설 정리 저장</button>
+        </form>
+      </div>
+      <div>
+        {% for e in editorials %}
+          <div class="card">
+            <div class="card-title-row"><h3 style="margin:0">{% if e.url %}<a href="{{ e.url }}" target="_blank" rel="noopener">{{ e.title }}</a>{% else %}{{ e.title }}{% endif %}</h3>{{ del_btn('writings', e.id) }}</div>
+            <dl class="kv">
+              {% if e.claim %}<dt>핵심 주장</dt><dd>{{ e.claim }}</dd>{% endif %}
+              {% if e.evidence %}<dt>근거</dt><dd style="white-space:pre-wrap">{{ e.evidence }}</dd>{% endif %}
+              {% if e.my_opinion %}<dt>내 생각</dt><dd style="white-space:pre-wrap">{{ e.my_opinion }}</dd>{% endif %}
+            </dl>
+            <div class="item-meta">{{ e.date }}</div>
+          </div>
+        {% else %}
+          <div class="empty">정리한 사설이 없어요.<br>오늘 읽은 사설 한 편으로 시작해볼까요?</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  {# ---------- 내 글 쓰기 ---------- #}
+  <div class="tab-panel" data-panel="write">
+    <div class="grid cols-2" style="align-items:start">
+      <div class="card">
+        <h2>내 글 쓰기</h2>
+        <form data-collection="writings" data-extra='{"kind":"mine"}'>
+          <div class="field"><label>주제/제목 *</label><input type="text" name="title" required placeholder="예) 미국 관세 정책이 한국 자동차 수출에 미치는 영향"></div>
+          <div class="field">
+            <label>본문</label>
+            <textarea name="body" required data-counter="#cnt" style="min-height:260px" placeholder="주장 → 근거 → 반론 → 결론 순서로 써봐요"></textarea>
+            <div class="counter" id="cnt">0자</div>
+          </div>
+          <div class="field"><label>스스로 한 피드백 (체크리스트 보고 적기)</label><textarea name="feedback" style="min-height:70px"></textarea></div>
+          <button class="btn" type="submit">글 저장</button>
+        </form>
+      </div>
+
+      <div>
+        <div class="card sky">
+          <h3>✅ 셀프 피드백 체크리스트</h3>
+          {% for c in w.checklist %}
+            <div class="row" style="flex-wrap:nowrap; margin-bottom:6px"><input type="checkbox" id="ck{{ loop.index }}"><label for="ck{{ loop.index }}" style="margin:0; font-family:var(--font-body); font-size:1rem">{{ c }}</label></div>
+          {% endfor %}
+        </div>
+        <div class="card yellow">
+          <h3>🧱 논리 구조 틀</h3>
+          {% for s in w.structures %}
+            <div style="margin-bottom:12px">
+              <b class="label-font" style="font-size:1.2rem">{{ s.name }}</b>
+              <div>{% for st in s.steps %}<span class="tag white">{{ st }}</span> {% endfor %}</div>
+              <div class="muted small">💡 {{ s.tip }}</div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <h2 style="margin:30px 0 14px">내가 쓴 글</h2>
+    {% for m in mine %}
+      <div class="card">
+        <div class="card-title-row"><h3 style="margin:0">{{ m.title }}</h3>{{ del_btn('writings', m.id) }}</div>
+        <div style="white-space:pre-wrap">{{ m.body }}</div>
+        {% if m.feedback %}<div class="quote-box"><b>피드백</b><br>{{ m.feedback }}</div>{% endif %}
+        <div class="item-meta">{{ m.date }} · {{ m.body|length }}자</div>
+      </div>
+    {% else %}
+      <div class="empty">아직 쓴 글이 없어요.</div>
+    {% endfor %}
+  </div>
+
+  {# ---------- 표현 노트 ---------- #}
+  <div class="tab-panel" data-panel="phrases">
+    <div class="grid cols-2" style="align-items:start">
+      <div class="card yellow">
+        <h2>좋은 표현 기록하기</h2>
+        <form data-collection="phrases">
+          <div class="field"><label>표현/문장 *</label><textarea name="text" required style="min-height:70px" placeholder="마음에 든 문장, 접속어, 논리 전개 방식 ..."></textarea></div>
+          <div class="field"><label>종류</label>
+            <select name="type"><option>좋은 표현</option><option>논리 구조</option><option>첫 문장</option><option>마무리 문장</option></select>
+          </div>
+          <div class="field"><label>출처 / 메모</label><input type="text" name="source"></div>
+          <button class="btn" type="submit">표현 저장 ⭐</button>
+        </form>
+      </div>
+      <div>
+        {% for p in phrases %}
+          <div class="item">
+            <div class="item-body">
+              <div class="item-text">“{{ p.text }}”</div>
+              <div class="item-meta"><span class="tag">{{ p.type }}</span> {{ p.source }} · {{ p.date }}</div>
+            </div>
+            {{ del_btn('phrases', p.id) }}
+          </div>
+        {% else %}
+          <div class="empty">좋은 표현을 모아두면 글쓰기 때 꺼내 쓸 수 있어요 ⭐</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

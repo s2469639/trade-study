@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% from "_macros.html" import note_list, note_form, bullets, del_btn %}
+{% block title %}기업 공부 · 무역공부노트{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h1>🏢 기업 공부</h1>
+  <p>사업부문 → 해외사업 → 경쟁사 → 채용공고까지, 지원할 회사를 깊게 파봐요.</p>
+</div>
+
+<div class="picker">
+  {% for c in companies %}
+    <a class="pick {{ 'active' if c.id == co.id }} {{ 'mine' if c.mine }}" href="{{ url_for('company', id=c.id) }}">{{ c.name }}</a>
+  {% endfor %}
+</div>
+
+<details class="form-toggle">
+  <summary class="btn sky small">＋ 기업 직접 추가하기</summary>
+  <div class="card">
+    <form data-collection="my_companies">
+      <div class="form-grid">
+        <div class="field"><label>기업명 *</label><input type="text" name="name" required></div>
+        <div class="field"><label>산업</label>
+          <select name="industry">{% for i in industries_all %}<option value="{{ i.id }}">{{ i.name }}</option>{% endfor %}<option value="">기타</option></select>
+        </div>
+        <div class="field full"><label>한 줄 소개</label><input type="text" name="summary"></div>
+        <div class="field"><label>사업부문 (줄바꿈으로 구분)</label><textarea name="segments"></textarea></div>
+        <div class="field"><label>주요 제품/서비스</label><textarea name="products"></textarea></div>
+        <div class="field"><label>해외사업</label><textarea name="overseas"></textarea></div>
+        <div class="field"><label>주요 시장</label><textarea name="markets"></textarea></div>
+        <div class="field"><label>경쟁사</label><textarea name="competitors"></textarea></div>
+        <div class="field"><label>최근 이슈</label><textarea name="issues"></textarea></div>
+      </div>
+      <button class="btn" type="submit">기업 추가 ✏️</button>
+    </form>
+  </div>
+</details>
+
+<div class="card yellow">
+  <div class="card-title-row">
+    <h2>{{ co.name }}</h2>
+    <div class="row">
+      {% if co.sample %}<span class="tag sample">샘플 · 직접 조사해서 보완하기</span>{% endif %}
+      {% if co.mine %}<span class="tag">내가 추가함</span>{{ del_btn('my_companies', co.raw_id) }}{% endif %}
+    </div>
+  </div>
+  <p style="margin:0">{{ co.summary or '한 줄 소개를 적어보세요.' }}</p>
+</div>
+
+<div class="tab-group">
+  <div class="tabs" data-tabs="tab">
+    <button class="tab" data-tab="segments">🧱 사업부문</button>
+    <button class="tab" data-tab="products">📦 제품/서비스</button>
+    <button class="tab" data-tab="overseas">🌐 해외사업</button>
+    <button class="tab" data-tab="markets">🗺️ 주요 시장</button>
+    <button class="tab" data-tab="competitors">⚔️ 경쟁사</button>
+    <button class="tab" data-tab="issues">🔥 뉴스/이슈</button>
+    <button class="tab" data-tab="jobs">📄 채용공고</button>
+    <button class="tab" data-tab="memo">📝 내 메모</button>
+  </div>
+
+  <div class="tab-panel" data-panel="segments">
+    <div class="grid cols-2">
+      {% for s in co.segments %}
+        <div class="card hoverable"><h3>{{ s.name }}</h3>{% if s.desc %}<p style="margin:0">{{ s.desc }}</p>{% endif %}</div>
+      {% else %}<div class="empty">사업부문을 아직 안 적었어요.</div>{% endfor %}
+    </div>
+    {% if co.sales_view %}
+      <div class="card sky" style="margin-top:22px"><h3>🎯 해외영업 관점 포인트</h3><p style="margin:0">{{ co.sales_view }}</p></div>
+    {% endif %}
+  </div>
+  <div class="tab-panel" data-panel="products"><div class="card"><h2>주요 제품/서비스</h2>{{ bullets(co.products) }}</div></div>
+  <div class="tab-panel" data-panel="overseas"><div class="card"><h2>해외사업</h2>{{ bullets(co.overseas) }}</div></div>
+  <div class="tab-panel" data-panel="markets"><div class="card"><h2>주요 시장</h2>{{ bullets(co.markets) }}</div></div>
+  <div class="tab-panel" data-panel="competitors"><div class="card"><h2>경쟁사</h2>{{ bullets(co.competitors) }}</div></div>
+
+  <div class="tab-panel" data-panel="issues">
+    <div class="card yellow"><h2>🔥 최근 이슈 (샘플)</h2>{{ bullets(co.issues) }}</div>
+    <div class="card">
+      <div class="card-title-row"><h2>📰 저장한 뉴스</h2><a class="btn small" href="{{ url_for('news') }}">뉴스 저장하러 가기</a></div>
+      {% for n in news %}
+        <div class="item"><div class="item-body">
+          <div class="item-title">{{ n.title }}</div><div class="item-text">{{ n.summary }}</div><div class="item-meta">{{ n.date }}</div>
+        </div></div>
+      {% else %}<div class="empty">뉴스 저장 화면에서 이 기업을 선택해 저장하면 여기에 모여요.</div>{% endfor %}
+    </div>
+  </div>
+
+  <div class="tab-panel" data-panel="jobs">
+    <div class="grid cols-2">
+      <div class="card">
+        <h2>채용공고 분석 쓰기</h2>
+        <p class="muted small">공고를 읽고 '이 회사가 어떤 사람을 원하는지' 정리해요.</p>
+        <form data-collection="jobs" data-extra='{{ {"company_id": co.id} | tojson | forceescape }}'>
+          <div class="field"><label>공고 제목/직무명 *</label><input type="text" name="title" required placeholder="예) 해외영업 (북미)"></div>
+          <div class="field"><label>주요 업무</label><textarea name="duties"></textarea></div>
+          <div class="field"><label>자격요건 / 우대사항</label><textarea name="requirements"></textarea></div>
+          <div class="field"><label>내가 이해한 직무 & 나와 연결점</label><textarea name="insight" placeholder="이 직무는 결국 ○○를 하는 일. 내 경험 중 △△가 연결됨."></textarea></div>
+          <button class="btn" type="submit">공고 분석 저장</button>
+        </form>
+      </div>
+      <div class="card">
+        <h2>저장한 공고 분석</h2>
+        {% for j in jobs %}
+          <div class="item"><div class="item-body">
+            <div class="item-title">{{ j.title }}</div>
+            {% if j.duties %}<div class="item-text"><b>업무</b> {{ j.duties }}</div>{% endif %}
+            {% if j.requirements %}<div class="item-text"><b>자격/우대</b> {{ j.requirements }}</div>{% endif %}
+            {% if j.insight %}<div class="item-text"><b>내 이해</b> {{ j.insight }}</div>{% endif %}
+            <div class="item-meta">{{ j.date }}</div>
+          </div>{{ del_btn('jobs', j.id) }}</div>
+        {% else %}<div class="empty">아직 분석한 공고가 없어요.</div>{% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-panel" data-panel="memo">
+    <div class="grid cols-2">
+      <div class="card"><h2>메모 쓰기</h2>{{ note_form('company', co.id) }}</div>
+      <div class="card"><h2>{{ co.name }} 메모 모음</h2>{{ note_list(notes) }}</div>
+    </div>
+  </div>
+</div>
+{% endblock %}

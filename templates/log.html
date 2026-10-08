@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% from "_macros.html" import del_btn %}
+{% block title %}나의 기록 · 무역공부노트{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h1>📒 나의 공부 기록</h1>
+  <p>지금까지 공부한 모든 게 여기 모여요.</p>
+</div>
+
+{% macro note_group(notes) %}
+  {% for n in notes %}
+    <div class="item"><div class="item-body">
+      <div class="item-title"><span class="tag yellow">{{ n.target_name }}</span></div>
+      <div class="item-text">{{ n.text }}</div><div class="item-meta">{{ n.date }}</div>
+    </div>{{ del_btn('notes', n.id) }}</div>
+  {% else %}<div class="empty">아직 없어요.</div>{% endfor %}
+{% endmacro %}
+
+<div class="tab-group">
+  <div class="tabs" data-tabs="tab">
+    <button class="tab" data-tab="timeline">🕒 전체 타임라인</button>
+    <button class="tab" data-tab="industry">🏭 산업별</button>
+    <button class="tab" data-tab="company">🏢 기업별</button>
+    <button class="tab" data-tab="trade">🚢 무역</button>
+    <button class="tab" data-tab="news">📰 뉴스</button>
+    <button class="tab" data-tab="writing">✍️ 내가 쓴 글</button>
+    <button class="tab" data-tab="unknown">❓ 모르는 것</button>
+    <button class="tab" data-tab="backup">💾 백업</button>
+  </div>
+
+  <div class="tab-panel" data-panel="timeline">
+    <div class="filter-bar" data-target="#timeline">
+      <input class="search" type="text" data-target="#timeline" placeholder="🔍 기록 검색">
+      <button class="chip active" data-key="label" data-value="">전체</button>
+      {% for l in ['공부','뉴스','글','메모','설명','면접답변'] %}<button class="chip" data-key="label" data-value="{{ l }}">{{ l }}</button>{% endfor %}
+    </div>
+    <div id="timeline">
+      {% for t in timeline %}
+        <div class="item filterable" data-label="{{ t.label }}">
+          <span class="tag yellow">{{ t.label }}</span>
+          <div class="item-body">
+            <div class="item-title">{{ t.title }}</div>
+            {% if t.text %}<div class="item-text">{{ t.text[:200] }}{{ '…' if t.text|length > 200 }}</div>{% endif %}
+            <div class="item-meta">{{ t.date }}{% if t.tag %} · {{ t.tag }}{% endif %}</div>
+          </div>
+          {{ del_btn(t.col, t.id) }}
+        </div>
+      {% else %}
+        <div class="empty">아직 기록이 없어요. 홈에서 오늘 공부한 걸 한 줄 적어보세요!</div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="tab-panel" data-panel="industry"><div class="card"><h2>산업별 조사 기록</h2>{{ note_group(notes_industry) }}</div></div>
+  <div class="tab-panel" data-panel="company"><div class="card"><h2>기업별 조사 기록</h2>{{ note_group(notes_company) }}</div></div>
+  <div class="tab-panel" data-panel="trade"><div class="card"><h2>무역 메모</h2>{{ note_group(notes_trade) }}</div></div>
+
+  <div class="tab-panel" data-panel="news">
+    {% for n in news %}
+      <div class="item"><div class="item-body">
+        <div class="item-title">{% if n.url %}<a href="{{ n.url }}" target="_blank" rel="noopener">{{ n.title }}</a>{% else %}{{ n.title }}{% endif %}</div>
+        <div class="item-text">{{ n.summary }}</div><div class="item-meta">{{ n.date }} · {{ n.category }}</div>
+      </div>{{ del_btn('news', n.id) }}</div>
+    {% else %}<div class="empty">저장한 뉴스가 없어요.</div>{% endfor %}
+  </div>
+
+  <div class="tab-panel" data-panel="writing">
+    {% for w in writings %}
+      <div class="item"><span class="tag">{{ '사설' if w.kind == 'editorial' else '내 글' }}</span><div class="item-body">
+        <div class="item-title">{{ w.title }}</div>
+        <div class="item-text">{{ (w.body or w.my_opinion or w.claim or '')[:200] }}</div><div class="item-meta">{{ w.date }}</div>
+      </div>{{ del_btn('writings', w.id) }}</div>
+    {% else %}<div class="empty">아직 쓴 글이 없어요.</div>{% endfor %}
+  </div>
+
+  <div class="tab-panel" data-panel="unknown">
+    <div class="card sky">
+      <h2>❓ 모르는 것 / 추가 공부할 것</h2>
+      <form data-collection="unknowns" class="row" style="margin-bottom:14px; flex-wrap:nowrap">
+        <input type="text" name="text" required placeholder="모르는 것 추가">
+        <button class="btn small" type="submit">추가</button>
+      </form>
+      {% for u in unknowns %}
+        <div class="item {{ 'done' if u.done }}">
+          <input type="checkbox" data-toggle="unknowns/{{ u.id }}" {{ 'checked' if u.done }}>
+          <div class="item-body"><div class="item-text">{{ u.text }}</div>{% if u.source %}<div class="item-meta">📰 {{ u.source }}</div>{% endif %}<div class="item-meta">{{ u.date }}</div></div>
+          {{ del_btn('unknowns', u.id) }}
+        </div>
+      {% else %}<div class="empty">모르는 게 없어요! (진짜로?)</div>{% endfor %}
+    </div>
+  </div>
+
+  <div class="tab-panel" data-panel="backup">
+    <div class="grid cols-2">
+      <div class="card">
+        <h2>💾 내보내기</h2>
+        <p>내 기록 전체를 파일 하나로 저장해요. 가끔 받아두면 안심!</p>
+        <a class="btn" href="{{ url_for('export_data') }}">백업 파일 받기</a>
+      </div>
+      <div class="card">
+        <h2>📂 불러오기</h2>
+        <p>백업 파일을 올리면 같은 이름의 기록이 <b>덮어써져요</b>.</p>
+        <form method="post" action="{{ url_for('import_data') }}" enctype="multipart/form-data" onsubmit="return confirm('기존 기록이 덮어써져요. 계속할까요?')">
+          <div class="field"><input type="file" name="file" accept=".json" required></div>
+          <button class="btn sky" type="submit">불러오기</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+{% from "_macros.html" import note_list, note_form %}
+{% block title %}무역 공부 · 무역공부노트{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h1>🚢 무역 공부</h1>
+  <p>수출입이 어떻게 흘러가는지, 서류와 용어까지 한 번에 정리해요.</p>
+</div>
+
+<div class="tab-group">
+  <div class="tabs" data-tabs="tab">
+    <button class="tab" data-tab="process">🧭 프로세스</button>
+    <button class="tab" data-tab="docs">📄 무역서류</button>
+    <button class="tab" data-tab="payment">💰 결제</button>
+    <button class="tab" data-tab="transport">🚛 운송</button>
+    <button class="tab" data-tab="customs">🛃 통관</button>
+    <button class="tab" data-tab="terms">🔤 용어집</button>
+    <button class="tab" data-tab="cases">🔍 사례</button>
+  </div>
+
+  {# ---------- 프로세스 ---------- #}
+  <div class="tab-panel" data-panel="process">
+    <div class="process-layout">
+      <div>
+        <h2>수출 프로세스 <span class="muted small">(단계를 눌러보세요)</span></h2>
+        <div class="process" id="processList">
+          {% for s in t.process %}
+            <button type="button" class="process-step" data-idx="{{ loop.index0 }}">
+              <span class="no">{{ s.no }}</span><b class="label-font" style="font-size:1.2rem">{{ s.title }}</b>
+            </button>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="process-detail">
+        <div class="card sky" id="processDetail">
+          <h2 id="pdTitle"></h2>
+          <p id="pdDesc"></p>
+          <h3>📎 관련 서류</h3>
+          <div id="pdDocs" class="row"></div>
+        </div>
+        <div class="card">
+          <h3>📥 수입은 이렇게 흘러가요</h3>
+          <ol class="steps" style="margin-top:12px">
+            {% for s in t.import_flow %}<li>{{ s }}</li>{% endfor %}
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {# ---------- 서류 ---------- #}
+  <div class="tab-panel" data-panel="docs">
+    <div class="grid cols-2">
+      {% for d in t.documents %}
+        <div class="card hoverable">
+          <div class="card-title-row"><h3 style="margin:0">{{ d.abbr }}</h3><span class="tag white">{{ d.who }}</span></div>
+          <div class="label-font" style="font-size:1.15rem">{{ d.name }}</div>
+          <p style="margin:6px 0 0">{{ d.desc }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  {# ---------- 결제 ---------- #}
+  <div class="tab-panel" data-panel="payment">
+    <div class="grid cols-2">
+      {% for p in t.payment %}
+        <div class="card hoverable">
+          <h2>{{ p.name }}</h2>
+          <p>{{ p.desc }}</p>
+          <div class="quote-box"><b>⚠️ 위험 포인트</b><br>{{ p.risk }}</div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  {# ---------- 운송 ---------- #}
+  <div class="tab-panel" data-panel="transport">
+    <div class="grid cols-2">
+      {% for p in t.transport %}
+        <div class="card hoverable">
+          <h2>{{ p.name }}</h2>
+          <p>{{ p.desc }}</p>
+          <span class="sticky-note">💡 {{ p.tip }}</span>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  {# ---------- 통관 ---------- #}
+  <div class="tab-panel" data-panel="customs">
+    <div class="grid cols-2">
+      <div class="card"><h2>📤 수출통관</h2><ol class="steps">{% for s in t.customs.export %}<li>{{ s }}</li>{% endfor %}</ol></div>
+      <div class="card"><h2>📥 수입통관</h2><ol class="steps">{% for s in t.customs.import %}<li>{{ s }}</li>{% endfor %}</ol></div>
+    </div>
+    <div class="card yellow" style="margin-top:22px">
+      <h3>⭐ 꼭 기억할 포인트</h3>
+      <ul>{% for p in t.customs.points %}<li>{{ p }}</li>{% endfor %}</ul>
+    </div>
+  </div>
+
+  {# ---------- 용어집 ---------- #}
+  <div class="tab-panel" data-panel="terms">
+    <div class="filter-bar" data-target="#termList">
+      <input class="search" type="text" data-target="#termList" placeholder="🔍 용어 검색">
+      <button class="chip active" data-key="category" data-value="">전체</button>
+      {% for c in ['인도조건','결제','서류','운송','통관','기타'] %}
+        <button class="chip" data-key="category" data-value="{{ c }}">{{ c }}</button>
+      {% endfor %}
+      <span class="spacer"></span>
+      <span class="label-font">외운 용어 <b id="known-count">{{ known|length }}</b> / {{ t.terms|length }}</span>
+    </div>
+    <div class="grid cols-3" id="termList">
+      {% for term in t.terms %}
+        <div class="term filterable {{ 'known' if term.id in known }}" data-category="{{ term.category }}">
+          <div class="term-head"><b>{{ term.term }}</b><span class="tag">{{ term.category }}</span></div>
+          <div class="muted small">{{ term.ko }}</div>
+          <div>{{ term.desc }}</div>
+          <button type="button" class="btn small white check" data-term="{{ term.id }}">{{ '✅ 외웠어요!' if term.id in known else '☐ 아직 헷갈려요' }}</button>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  {# ---------- 사례 + 내 메모 ---------- #}
+  <div class="tab-panel" data-panel="cases">
+    <div class="grid cols-3">
+      {% for c in t.cases %}
+        <div class="card hoverable">
+          <h3>{{ c.title }}</h3>
+          <p class="muted small">{{ c.situation }}</p>
+          <p><b>핵심</b> {{ c.point }}</p>
+          <div class="quote-box"><b>배운 점</b><br>{{ c.lesson }}</div>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="grid cols-2" style="margin-top:26px">
+      <div class="card"><h2>내가 찾은 실제 사례 / 메모</h2>{{ note_form('trade', 'trade') }}</div>
+      <div class="card"><h2>무역 메모 모음</h2>{{ note_list(notes) }}</div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // 프로세스 단계를 누르면 오른쪽에 설명을 보여준다
+  const PROCESS = {{ t.process | tojson }};
+  const steps = document.querySelectorAll(".process-step");
+  function showStep(i) {
+    const s = PROCESS[i];
+    steps.forEach((el, idx) => el.classList.toggle("active", idx === i));
+    document.getElementById("pdTitle").textContent = s.no + ". " + s.title;
+    document.getElementById("pdDesc").textContent = s.desc;
+    const box = document.getElementById("pdDocs");
+    box.innerHTML = "";
+    s.docs.forEach((d) => { const t = document.createElement("span"); t.className = "tag yellow"; t.textContent = d; box.appendChild(t); });
+  }
+  steps.forEach((el) => el.addEventListener("click", () => showStep(+el.dataset.idx)));
+  showStep(0);
+</script>
+{% endblock %}

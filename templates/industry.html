@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% from "_macros.html" import note_list, note_form, bullets %}
+{% block title %}산업 공부 · 무역공부노트{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h1>🏭 산업 공부</h1>
+  <p>관심 산업을 고르고, 큰 그림부터 차근차근 정리해요.</p>
+</div>
+
+<div class="picker">
+  {% for i in industries %}
+    <a class="pick {{ 'active' if i.id == ind.id }}" href="{{ url_for('industry', id=i.id) }}">
+      <span class="pick-emoji">{{ i.emoji }}</span>{{ i.name }}
+    </a>
+  {% endfor %}
+</div>
+
+<div class="card yellow">
+  <div class="card-title-row">
+    <h2>{{ ind.emoji }} {{ ind.name }}</h2>
+    {% if ind.sample %}<span class="tag sample">샘플 · 직접 조사해서 보완하기</span>{% endif %}
+  </div>
+  <p class="label-font" style="font-size:1.25rem; margin:0">{{ ind.tagline }}</p>
+</div>
+
+<div class="tab-group">
+  <div class="tabs" data-tabs="tab">
+    <button class="tab" data-tab="overview">📖 개요</button>
+    <button class="tab" data-tab="structure">🧩 구조</button>
+    <button class="tab" data-tab="products">📦 주요 제품</button>
+    <button class="tab" data-tab="companies">🏢 주요 기업</button>
+    <button class="tab" data-tab="markets">🌏 국가/시장</button>
+    <button class="tab" data-tab="issues">🔥 이슈·뉴스</button>
+    <button class="tab" data-tab="memo">📝 내 메모</button>
+  </div>
+
+  <div class="tab-panel" data-panel="overview">
+    <div class="card"><h2>산업 개요</h2><p>{{ ind.overview }}</p></div>
+    <div class="card sky">
+      <h3>🎯 해외영업 관점 포인트</h3>
+      <p style="margin:0">{{ ind.sales_view }}</p>
+    </div>
+  </div>
+
+  <div class="tab-panel" data-panel="structure">
+    <div class="card">
+      <h2>산업 구조 (밸류체인)</h2>
+      <ol class="steps">
+        {% for s in ind.structure %}<li><b>{{ s.step }}</b><br><span class="muted">{{ s.desc }}</span></li>{% endfor %}
+      </ol>
+    </div>
+  </div>
+
+  <div class="tab-panel" data-panel="products">
+    <div class="grid cols-2">
+      {% for p in ind.products %}
+        <div class="card hoverable"><h3>{{ p.name }}</h3><p style="margin:0">{{ p.desc }}</p></div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="tab-panel" data-panel="companies">
+    <div class="grid cols-2">
+      {% for c in ind.companies %}
+        <div class="card hoverable">
+          <div class="card-title-row"><h3 style="margin:0">{{ c.name }}</h3><span class="tag white">{{ c.country }}</span></div>
+          <p class="muted" style="margin:0">{{ c.role }}</p>
+        </div>
+      {% endfor %}
+    </div>
+    {% if companies %}
+      <h3 style="margin:26px 0 12px">📚 이 산업의 기업 공부 페이지</h3>
+      <div class="picker">
+        {% for c in companies %}<a class="pick" href="{{ url_for('company', id=c.id) }}">{{ c.name }}</a>{% endfor %}
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="tab-panel" data-panel="markets">
+    <div class="grid cols-2">
+      {% for m in ind.markets %}
+        <div class="card hoverable"><h3>🌍 {{ m.country }}</h3><p style="margin:0">{{ m.point }}</p></div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="tab-panel" data-panel="issues">
+    <div class="grid cols-2" style="margin-bottom:22px">
+      {% for i in ind.issues %}
+        <div class="card yellow"><h3>🔥 {{ i.title }}</h3><p style="margin:0">{{ i.desc }}</p></div>
+      {% endfor %}
+    </div>
+    <div class="card">
+      <div class="card-title-row"><h2>📰 내가 저장한 {{ ind.name }} 뉴스</h2><a class="btn small" href="{{ url_for('news') }}">뉴스 저장하러 가기</a></div>
+      {% for n in news %}
+        <div class="item"><div class="item-body">
+          <div class="item-title">{% if n.url %}<a href="{{ n.url }}" target="_blank" rel="noopener">{{ n.title }}</a>{% else %}{{ n.title }}{% endif %}</div>
+          <div class="item-text">{{ n.summary }}</div><div class="item-meta">{{ n.date }}</div>
+        </div></div>
+      {% else %}
+        <div class="empty">저장한 뉴스가 아직 없어요. 뉴스 메뉴에서 산업 태그를 '{{ ind.name }}'로 저장해보세요.</div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="tab-panel" data-panel="memo">
+    <div class="grid cols-2">
+      <div class="card"><h2>메모 쓰기</h2>{{ note_form('industry', ind.id) }}</div>
+      <div class="card"><h2>{{ ind.name }} 메모 모음</h2>{{ note_list(notes) }}</div>
+    </div>
+  </div>
+</div>
+{% endblock %}

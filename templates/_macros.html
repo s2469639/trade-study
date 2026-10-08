@@ -1,0 +1,43 @@
+{# 여러 화면에서 같이 쓰는 작은 조각들 #}
+
+{# 삭제 버튼 #}
+{% macro del_btn(col, id) -%}
+  <button class="icon-btn" type="button" title="삭제" data-del="{{ col }}/{{ id }}">🗑️</button>
+{%- endmacro %}
+
+{# 메모 목록 (산업/기업/무역 공통) #}
+{% macro note_list(notes) -%}
+  {% if notes %}
+    {% for n in notes %}
+      <div class="item">
+        <div class="item-body">
+          <div class="item-text">{{ n.text }}</div>
+          <div class="item-meta">{{ n.date }}</div>
+        </div>
+        {{ del_btn('notes', n.id) }}
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="empty">아직 메모가 없어요. 공부하다 떠오른 걸 적어봐요 ✏️</div>
+  {% endif %}
+{%- endmacro %}
+
+{# 메모 입력 폼. target_type: industry | company | trade #}
+{% macro note_form(target_type, target_id) -%}
+  <form data-collection="notes" data-extra='{{ {"target_type": target_type, "target_id": target_id} | tojson | forceescape }}'>
+    <div class="field">
+      <label>내 메모</label>
+      <textarea name="text" required placeholder="새로 알게 된 것, 궁금한 점, 면접에서 말할 한 줄 ..."></textarea>
+    </div>
+    <button class="btn" type="submit">메모 저장 ✏️</button>
+  </form>
+{%- endmacro %}
+
+{# 줄글 문자열 목록(ul) #}
+{% macro bullets(items) -%}
+  {% if items %}
+    <ul>{% for i in items %}<li>{{ i }}</li>{% endfor %}</ul>
+  {% else %}
+    <div class="empty">아직 비어 있어요. 조사해서 채워봐요!</div>
+  {% endif %}
+{%- endmacro %}

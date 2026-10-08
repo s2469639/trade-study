@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% from "_macros.html" import del_btn %}
+{% block title %}홈 · 무역공부노트{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <span class="doodle">✈️</span><span class="doodle d2">⭐</span>
+  <h1>오늘은 뭘 공부해볼까?</h1>
+  <p>{{ today }} · 산업 → 기업 → 무역 → 뉴스 → 글쓰기 → 면접, 한 바퀴 돌아보자!</p>
+</section>
+
+<div class="grid cols-4" style="margin-bottom:28px">
+  <div class="card stat yellow"><div class="num">{{ stats.logs }}</div><div class="cap">공부 기록</div></div>
+  <div class="card stat sky"><div class="num">{{ stats.news }}</div><div class="cap">저장한 뉴스</div></div>
+  <div class="card stat"><div class="num">{{ stats.writings }}</div><div class="cap">쓴 글</div></div>
+  <div class="card stat"><div class="num">{{ stats.terms }}<small style="font-size:1.1rem">/{{ stats.terms_total }}</small></div><div class="cap">외운 무역 용어</div></div>
+</div>
+
+<div class="grid cols-2">
+  <div class="card yellow">
+    <h2>💡 오늘의 무역 용어</h2>
+    <div class="row"><b class="label-font" style="font-size:1.5rem">{{ term_of_day.term }}</b><span class="tag white">{{ term_of_day.category }}</span></div>
+    <div class="muted">{{ term_of_day.ko }}</div>
+    <p style="margin-top:8px">{{ term_of_day.desc }}</p>
+    <a class="btn small white" href="{{ url_for('trade') }}#tab=terms">용어집 가기 →</a>
+  </div>
+
+  <div class="card">
+    <h2>✏️ 오늘 공부한 것 한 줄</h2>
+    <form data-collection="logs">
+      <div class="field">
+        <textarea name="text" required style="min-height:70px" placeholder="예) 인코텀즈 FOB/CIF 차이 정리함"></textarea>
+      </div>
+      <div class="row">
+        <select name="tag" style="width:auto">
+          <option value="">분류 없음</option>
+          <option>산업</option><option>기업</option><option>무역</option>
+          <option>뉴스</option><option>글쓰기</option><option>면접</option>
+        </select>
+        <button class="btn" type="submit">기록하기</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>✅ 오늘 할 일</h2>
+    <form data-collection="todos" class="row" style="margin-bottom:12px; flex-wrap:nowrap">
+      <input type="text" name="text" required placeholder="할 일 추가">
+      <button class="btn small" type="submit">추가</button>
+    </form>
+    {% for t in todos %}
+      <div class="item {{ 'done' if t.done }}">
+        <input type="checkbox" data-toggle="todos/{{ t.id }}" {{ 'checked' if t.done }}>
+        <div class="item-body"><div class="item-text">{{ t.text }}</div></div>
+        {{ del_btn('todos', t.id) }}
+      </div>
+    {% else %}
+      <div class="empty">할 일이 없어요. 오늘의 목표를 적어볼까요?</div>
+    {% endfor %}
+  </div>
+
+  <div class="card sky">
+    <h2>❓ 모르는 것 / 더 공부할 것</h2>
+    {% for u in unknowns %}
+      <div class="item">
+        <input type="checkbox" data-toggle="unknowns/{{ u.id }}" title="해결!">
+        <div class="item-body">
+          <div class="item-text">{{ u.text }}</div>
+          {% if u.source %}<div class="item-meta">📰 {{ u.source }}</div>{% endif %}
+        </div>
+        {{ del_btn('unknowns', u.id) }}
+      </div>
+    {% else %}
+      <div class="empty">모르는 게 생기면 여기 모여요 (뉴스 저장할 때도 추가돼요)</div>
+    {% endfor %}
+    <form data-collection="unknowns" class="row" style="margin-top:12px; flex-wrap:nowrap">
+      <input type="text" name="text" required placeholder="모르는 것 바로 추가">
+      <button class="btn small" type="submit">추가</button>
+    </form>
+  </div>
+</div>
+
+<h2 style="margin:34px 0 14px">어디부터 볼까?</h2>
+<div class="grid cols-3">
+  <a class="card hoverable menu-card" href="{{ url_for('industry') }}"><span class="m-emoji">🏭</span><h3>산업 공부</h3><p>개요 · 구조 · 제품 · 기업 · 시장 · 이슈</p></a>
+  <a class="card hoverable menu-card" href="{{ url_for('company') }}"><span class="m-emoji">🏢</span><h3>기업 공부</h3><p>사업부문 · 해외사업 · 경쟁사 · 채용공고</p></a>
+  <a class="card hoverable menu-card" href="{{ url_for('trade') }}"><span class="m-emoji">🚢</span><h3>무역 공부</h3><p>프로세스 · 서류 · 결제 · 운송 · 통관 · 용어</p></a>
+  <a class="card hoverable menu-card" href="{{ url_for('news') }}"><span class="m-emoji">📰</span><h3>뉴스 & 시사</h3><p>뉴스 저장 · 배경지식 · 왜 중요한가</p></a>
+  <a class="card hoverable menu-card" href="{{ url_for('writing') }}"><span class="m-emoji">✍️</span><h3>글쓰기</h3><p>사설 정리 · 내 생각 · 피드백</p></a>
+  <a class="card hoverable menu-card" href="{{ url_for('interview') }}"><span class="m-emoji">🎤</span><h3>해외영업 연결</h3><p>예상 질문 · 답변 연습 · 설명해보기</p></a>
+</div>
+
+{% if recent_logs %}
+<h2 style="margin:34px 0 14px">최근 공부 기록</h2>
+{% for l in recent_logs %}
+  <div class="item">
+    <div class="item-body">
+      <div class="item-text">{{ l.text }}</div>
+      <div class="item-meta">{{ l.date }}{% if l.tag %} · <span class="tag">{{ l.tag }}</span>{% endif %}</div>
+    </div>
+    {{ del_btn('logs', l.id) }}
+  </div>
+{% endfor %}
+{% endif %}
+{% endblock %}

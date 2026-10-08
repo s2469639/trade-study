@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}무역공부노트{% endblock %}</title>
+  <!-- 임시 폰트(인터넷 연결 시). static/fonts/ 에 내 폰트를 넣으면 그게 우선 적용됨 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Jua&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="logo" href="{{ url_for('home') }}"><span>무역공부노트</span><small>해외영업 가는 길 ✈️</small></a>
+    {% for endpoint, emoji, label in NAV %}
+      <a class="nav-link {{ 'active' if request.endpoint == endpoint }}" href="{{ url_for(endpoint) }}">
+        <span class="nav-emoji">{{ emoji }}</span>{{ label }}
+      </a>
+    {% endfor %}
+    <div class="sidebar-foot">{{ today }}<br>오늘도 한 줄만 더! ✏️</div>
+  </aside>
+
+  <main class="main">
+    {% block content %}{% endblock %}
+  </main>
+
+  <div id="toast"></div>
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% from "_macros.html" import del_btn %}
+{% block title %}해외영업 연결 · 무역공부노트{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h1>🎤 해외영업 연결</h1>
+  <p>공부한 내용을 면접 답변으로 바꿔보는 곳이에요. 소리 내어 말해보고, 적어서 저장해요.</p>
+</div>
+
+<div class="tab-group">
+  <div class="tabs" data-tabs="tab">
+    <button class="tab" data-tab="random">🎲 랜덤 연습</button>
+    <button class="tab" data-tab="list">📋 전체 질문</button>
+    <button class="tab" data-tab="explain">🗣️ 설명해보기</button>
+  </div>
+
+  {# ---------- 랜덤 연습 ---------- #}
+  <div class="tab-panel" data-panel="random">
+    <div class="filter-bar" id="scopeBar">
+      <button class="chip active" data-scope="">전체</button>
+      <button class="chip" data-scope="common">공통</button>
+      <button class="chip" data-scope="industry">산업별</button>
+      <button class="chip" data-scope="company">기업별</button>
+    </div>
+    <div class="grid cols-2" style="align-items:start">
+      <div class="card yellow">
+        <span class="tag white" id="qScope">-</span>
+        <div class="question-box" id="qText" style="margin:10px 0">버튼을 눌러 질문을 뽑아보세요!</div>
+        <div class="quote-box muted" id="qHint" style="display:none"></div>
+        <div class="row" style="margin-top:12px">
+          <button class="btn" id="pickBtn" type="button">🎲 질문 뽑기</button>
+          <button class="btn white" id="hintBtn" type="button">💡 힌트</button>
+          <span class="spacer"></span>
+          <span class="timer" id="timer">01:00</span>
+          <button class="btn sky small" id="timerBtn" type="button">타이머</button>
+        </div>
+      </div>
+      <div class="card">
+        <h2>내 답변 쓰기</h2>
+        <form id="answerForm">
+          <div class="field"><textarea name="text" required style="min-height:150px" placeholder="결론 먼저 → 이유 → 예시 순서로"></textarea></div>
+          <button class="btn" type="submit" id="answerBtn" disabled>답변 저장</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  {# ---------- 전체 질문 ---------- #}
+  <div class="tab-panel" data-panel="list">
+    <div class="filter-bar" data-target="#qList">
+      <input class="search" type="text" data-target="#qList" placeholder="🔍 질문 검색">
+      <button class="chip active" data-key="scope" data-value="">전체</button>
+      <button class="chip" data-key="scope" data-value="common">공통</button>
+      {% for i in industries_all %}<button class="chip" data-key="scope" data-value="{{ i.id }}">{{ i.name }}</button>{% endfor %}
+      {% for c in companies %}<button class="chip" data-key="scope" data-value="{{ c.id }}">{{ c.name }}</button>{% endfor %}
+    </div>
+    <div id="qList">
+      {% for q in questions %}
+        <div class="card filterable" data-scope="{{ q.scope }}" style="margin-bottom:16px">
+          <div class="row"><span class="tag yellow">{{ scope_names.get(q.scope, q.scope) }}</span></div>
+          <h3 style="margin:8px 0 4px">{{ q.text }}</h3>
+          <div class="muted small">💡 {{ q.hint }}</div>
+          <details style="margin-top:10px">
+            <summary class="btn small white" style="display:inline-flex">내 답변 {{ answers.get(q.id, [])|length }}개 · 쓰기</summary>
+            <div style="margin-top:12px">
+              {% for a in answers.get(q.id, []) %}
+                <div class="item"><div class="item-body"><div class="item-text">{{ a.text }}</div><div class="item-meta">{{ a.date }}</div></div>{{ del_btn('answers', a.id) }}</div>
+              {% endfor %}
+              <form data-collection="answers" data-extra='{{ {"question_id": q.id} | tojson | forceescape }}'>
+                <div class="field"><textarea name="text" required style="min-height:90px" placeholder="내 답변"></textarea></div>
+                <button class="btn small" type="submit">저장</button>
+              </form>
+            </div>
+          </details>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  {# ---------- 설명해보기 ---------- #}
+  <div class="tab-panel" data-panel="explain">
+    <div class="grid cols-2" style="align-items:start">
+      <div class="card sky">
+        <h2>공부한 걸 내 말로 설명해보기</h2>
+        <p class="muted">친구에게 5문장으로 설명한다고 생각하고 써봐요. 막히는 부분이 '진짜 모르는 부분'이에요.</p>
+        <form data-collection="explains">
+          <div class="field"><label>주제 *</label><input type="text" name="topic" required placeholder="예) 반도체 산업 구조 / FOB와 CIF / 기아의 해외 전략"></div>
+          <div class="field"><label>내 설명</label><textarea name="text" required style="min-height:170px"></textarea></div>
+          <div class="field"><label>막힌 부분 (모르는 것 목록에 저장되진 않아요, 메모용)</label><input type="text" name="stuck"></div>
+          <button class="btn" type="submit">저장</button>
+        </form>
+      </div>
+      <div>
+        {% for e in explains %}
+          <div class="card">
+            <div class="card-title-row"><h3 style="margin:0">🗣️ {{ e.topic }}</h3>{{ del_btn('explains', e.id) }}</div>
+            <div style="white-space:pre-wrap">{{ e.text }}</div>
+            {% if e.stuck %}<div class="quote-box"><b>막힌 부분</b> {{ e.stuck }}</div>{% endif %}
+            <div class="item-meta">{{ e.date }}</div>
+          </div>
+        {% else %}
+          <div class="empty">아직 설명해본 주제가 없어요.</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // 랜덤 질문 뽑기 + 1분 타이머
+  const QUESTIONS = {{ questions | tojson }};
+  const SCOPE_NAMES = {{ scope_names | tojson }};
+  const INDUSTRY_IDS = {{ industries_all | map(attribute='id') | list | tojson }};
+  let current = null, scopeFilter = "";
+
+  document.getElementById("scopeBar").addEventListener("click", (e) => {
+    const chip = e.target.closest(".chip");
+    if (!chip) return;
+    document.querySelectorAll("#scopeBar .chip").forEach((c) => c.classList.remove("active"));
+    chip.classList.add("active");
+    scopeFilter = chip.dataset.scope;
+  });
+
+  function inScope(q) {
+    if (!scopeFilter) return true;
+    if (scopeFilter === "common") return q.scope === "common";
+    if (scopeFilter === "industry") return INDUSTRY_IDS.includes(q.scope);
+    return q.scope !== "common" && !INDUSTRY_IDS.includes(q.scope);
+  }
+
+  document.getElementById("pickBtn").addEventListener("click", () => {
+    const pool = QUESTIONS.filter(inScope);
+    if (!pool.length) return;
+    let q; do { q = pool[Math.floor(Math.random() * pool.length)]; } while (pool.length > 1 && current && q.id === current.id);
+    current = q;
+    document.getElementById("qScope").textContent = SCOPE_NAMES[q.scope] || q.scope;
+    document.getElementById("qText").textContent = q.text;
+    const hint = document.getElementById("qHint");
+    hint.textContent = "💡 " + q.hint; hint.style.display = "none";
+    document.getElementById("answerBtn").disabled = false;
+    resetTimer();
+  });
+  document.getElementById("hintBtn").addEventListener("click", () => {
+    const h = document.getElementById("qHint");
+    if (current) h.style.display = h.style.display === "none" ? "block" : "none";
+  });
+
+  document.getElementById("answerForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!current) return;
+    const text = e.target.text.value.trim();
+    try {
+      await api("POST", "/api/answers", { question_id: current.id, text });
+      e.target.reset();
+      toast("답변 저장 완료 ✏️");
+    } catch (err) { toast("저장 실패 😢"); }
+  });
+
+  let timerId = null, left = 60;
+  const timerEl = document.getElementById("timer");
+  function render() { timerEl.textContent = String(Math.floor(left / 60)).padStart(2, "0") + ":" + String(left % 60).padStart(2, "0"); }
+  function resetTimer() { clearInterval(timerId); timerId = null; left = 60; render(); }
+  document.getElementById("timerBtn").addEventListener("click", () => {
+    if (timerId) return resetTimer();
+    timerId = setInterval(() => { left--; render(); if (left <= 0) { clearInterval(timerId); timerId = null; toast("⏰ 시간 끝!"); } }, 1000);
+  });
+</script>
+{% endblock %}
