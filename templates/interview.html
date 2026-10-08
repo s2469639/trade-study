@@ -137,7 +137,9 @@
     let q; do { q = pool[Math.floor(Math.random() * pool.length)]; } while (pool.length > 1 && current && q.id === current.id);
     current = q;
     document.getElementById("qScope").textContent = SCOPE_NAMES[q.scope] || q.scope;
-    document.getElementById("qText").textContent = q.text;
+    const qt = document.getElementById("qText");
+    qt.textContent = q.text;
+    qt.classList.remove("swap"); void qt.offsetWidth; qt.classList.add("swap");
     const hint = document.getElementById("qHint");
     hint.textContent = "💡 " + q.hint; hint.style.display = "none";
     document.getElementById("answerBtn").disabled = false;

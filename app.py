@@ -95,8 +95,16 @@ def home():
         "terms": len(storage.read_all("known_terms")),
         "terms_total": len(terms),
     }
+    hour = datetime.now().hour
+    greeting = ("좋은 아침이에요 ☀️" if 5 <= hour < 12 else "점심 먹고 한 페이지 📖" if 12 <= hour < 18
+                else "오늘 하루도 수고했어요 🌙" if 18 <= hour < 24 else "늦은 밤, 한 줄만 더 🦉")
+    days = set()
+    for col in ("logs", "news", "writings", "notes", "explains", "answers"):
+        days.update(i.get("date") for i in storage.read_all(col) if i.get("date"))
     return render_template(
         "home.html",
+        greeting=greeting,
+        study_days=len(days),
         term_of_day=term_of_day,
         todos=todos,
         unknowns=unknowns[:6],

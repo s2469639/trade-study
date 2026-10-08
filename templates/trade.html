@@ -151,6 +151,8 @@
   function showStep(i) {
     const s = PROCESS[i];
     steps.forEach((el, idx) => el.classList.toggle("active", idx === i));
+    const detail = document.getElementById("processDetail");
+    detail.classList.remove("swap"); void detail.offsetWidth; detail.classList.add("swap");   // 바뀔 때마다 톡 올라오는 애니메이션
     document.getElementById("pdTitle").textContent = s.no + ". " + s.title;
     document.getElementById("pdDesc").textContent = s.desc;
     const box = document.getElementById("pdDocs");

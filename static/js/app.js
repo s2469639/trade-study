@@ -15,7 +15,34 @@ function toast(msg) {
   el.textContent = msg;
   el.classList.add("show");
   clearTimeout(toast._t);
-  toast._t = setTimeout(() => el.classList.remove("show"), 1600);
+  toast._t = setTimeout(() => el.classList.remove("show"), 1800);
+}
+
+// 🎉 톡 터지는 색종이 (x, y 는 화면 좌표)
+function burst(x, y, count = 16) {
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const colors = ["#FFD43B", "#4DABF7", "#1C7ED6", "#FFE88A", "#A5D8FB"];
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement("span");
+    p.className = "confetti";
+    p.style.left = x + "px";
+    p.style.top = y + "px";
+    p.style.background = colors[i % colors.length];
+    document.body.appendChild(p);
+    const angle = Math.random() * Math.PI * 2, dist = 50 + Math.random() * 90;
+    p.animate(
+      [
+        { transform: "translate(0,0) rotate(0) scale(1)", opacity: 1 },
+        { transform: `translate(${Math.cos(angle) * dist}px, ${Math.sin(angle) * dist - 30}px) rotate(${Math.random() * 540}deg) scale(1)`, opacity: 1, offset: 0.55 },
+        { transform: `translate(${Math.cos(angle) * dist * 1.1}px, ${Math.sin(angle) * dist + 70}px) rotate(${Math.random() * 720}deg) scale(.4)`, opacity: 0 },
+      ],
+      { duration: 900 + Math.random() * 400, easing: "cubic-bezier(.2,.7,.3,1)" }
+    ).onfinish = () => p.remove();
+  }
+}
+function burstAt(el) {
+  const r = el.getBoundingClientRect();
+  burst(r.left + r.width / 2, r.top + r.height / 2);
 }
 
 async function api(method, url, body) {
@@ -40,6 +67,20 @@ document.querySelectorAll("[data-tabs]").forEach((group) => {
   const buttons = group.querySelectorAll(".tab");
   const root = group.parentElement;
 
+  // 탭 뒤에서 미끄러지듯 움직이는 하얀 알약
+  const indicator = document.createElement("span");
+  indicator.className = "tab-indicator";
+  group.prepend(indicator);
+  function moveIndicator() {
+    const active = group.querySelector(".tab.active");
+    if (!active) return;
+    indicator.style.left = active.offsetLeft + "px";
+    indicator.style.top = active.offsetTop + "px";
+    indicator.style.width = active.offsetWidth + "px";
+    indicator.style.height = active.offsetHeight + "px";
+  }
+  window.addEventListener("resize", moveIndicator);
+
   function show(name) {
     buttons.forEach((b) => b.classList.toggle("active", b.dataset.tab === name));
     root.querySelectorAll(":scope > .tab-panel").forEach((p) =>
@@ -48,6 +89,8 @@ document.querySelectorAll("[data-tabs]").forEach((group) => {
     const hash = new URLSearchParams(location.hash.slice(1));
     hash.set(key, name);
     history.replaceState(null, "", "#" + hash.toString());
+    moveIndicator();
+    root.dispatchEvent(new CustomEvent("tabshown", { detail: name }));
   }
 
   buttons.forEach((b) => b.addEventListener("click", () => show(b.dataset.tab)));
@@ -96,6 +139,7 @@ document.addEventListener("click", async (e) => {
       const card = term.closest(".term");
       card.classList.toggle("known", r.known);
       term.textContent = r.known ? "✅ 외웠어요!" : "☐ 아직 헷갈려요";
+      if (r.known) burstAt(term);
       const counter = document.getElementById("known-count");
       if (counter) counter.textContent = document.querySelectorAll(".term.known").length;
     } catch (err) { toast("저장 실패 😢"); }
@@ -109,6 +153,7 @@ document.addEventListener("change", async (e) => {
   try {
     await api("PATCH", `/api/${col}/${id}`, { done: t.checked });
     t.closest(".item").classList.toggle("done", t.checked);
+    if (t.checked) burstAt(t);
   } catch (err) { toast("저장 실패 😢"); t.checked = !t.checked; }
 });
 
@@ -151,5 +196,46 @@ document.querySelectorAll("textarea[data-counter]").forEach((ta) => {
 // ---------- 저장 후 토스트 보여주기 ----------
 try {
   const flash = sessionStorage.getItem("flash");
-  if (flash) { sessionStorage.removeItem("flash"); toast(flash); }
+  if (flash) {
+    sessionStorage.removeItem("flash");
+    toast(flash);
+    if (flash.includes("저장")) burst(innerWidth / 2, innerHeight - 40, 20);
+  }
 } catch (e) {}
+
+// ---------- 스르륵 등장 (화면에 보일 때 하나씩) ----------
+(function () {
+  const sel = ".page-head, .hero, .card, .item, .pick, .term, .process-step, .steps li, .empty, .chip";
+  const io = "IntersectionObserver" in window ? new IntersectionObserver((entries) => {
+    entries.forEach((en) => {
+      if (!en.isIntersecting) return;
+      en.target.classList.add("in");
+      io.unobserve(en.target);
+    });
+  }, { threshold: 0.06, rootMargin: "0px 0px -30px 0px" }) : null;
+
+  document.querySelectorAll(sel).forEach((el) => {
+    if (el.closest(".sidebar") || el.closest(".tab-indicator")) return;
+    // 같은 부모 안에서 몇 번째인지에 따라 살짝 늦게 등장 (최대 8단계)
+    const idx = [...el.parentElement.children].indexOf(el);
+    el.style.setProperty("--i", Math.min(idx, 8));
+    el.classList.add("reveal");
+    io ? io.observe(el) : el.classList.add("in");
+  });
+  // 탭 패널의 직접 자식에도 순서 지정 (탭 전환 때 올라오는 애니메이션용)
+  document.querySelectorAll(".tab-panel").forEach((p) =>
+    [...p.children].forEach((c, i) => c.style.setProperty("--i", Math.min(i, 8)))
+  );
+})();
+
+// ---------- 숫자 카운트업 ----------
+document.querySelectorAll("[data-count]").forEach((el) => {
+  const end = parseInt(el.dataset.count, 10) || 0;
+  if (!end || matchMedia("(prefers-reduced-motion: reduce)").matches) { el.textContent = end; return; }
+  const t0 = performance.now(), dur = 900;
+  (function tick(now) {
+    const k = Math.min((now - t0) / dur, 1);
+    el.textContent = Math.round(end * (1 - Math.pow(1 - k, 3)));
+    if (k < 1) requestAnimationFrame(tick);
+  })(t0);
+});

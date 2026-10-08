@@ -4,16 +4,16 @@
 
 {% block content %}
 <section class="hero">
-  <span class="doodle">✈️</span><span class="doodle d2">⭐</span>
-  <h1>오늘은 뭘 공부해볼까?</h1>
-  <p>{{ today }} · 산업 → 기업 → 무역 → 뉴스 → 글쓰기 → 면접, 한 바퀴 돌아보자!</p>
+  <span class="doodle">✈️</span><span class="doodle d2">⭐</span><span class="doodle d3">📘</span>
+  <h1>{{ greeting }}</h1>
+  <p>{{ today }} · 지금까지 <b>{{ study_days }}일</b> 공부했어요. 오늘은 뭘 해볼까요?</p>
 </section>
 
-<div class="grid cols-4" style="margin-bottom:28px">
-  <div class="card stat yellow"><div class="num">{{ stats.logs }}</div><div class="cap">공부 기록</div></div>
-  <div class="card stat sky"><div class="num">{{ stats.news }}</div><div class="cap">저장한 뉴스</div></div>
-  <div class="card stat"><div class="num">{{ stats.writings }}</div><div class="cap">쓴 글</div></div>
-  <div class="card stat"><div class="num">{{ stats.terms }}<small style="font-size:1.1rem">/{{ stats.terms_total }}</small></div><div class="cap">외운 무역 용어</div></div>
+<div class="grid cols-4" style="margin-bottom:36px">
+  <div class="card stat yellow"><div class="num" data-count="{{ stats.logs }}">{{ stats.logs }}</div><div class="cap">공부 기록</div></div>
+  <div class="card stat sky"><div class="num" data-count="{{ stats.news }}">{{ stats.news }}</div><div class="cap">저장한 뉴스</div></div>
+  <div class="card stat"><div class="num" data-count="{{ stats.writings }}">{{ stats.writings }}</div><div class="cap">쓴 글</div></div>
+  <div class="card stat"><div class="num"><span data-count="{{ stats.terms }}">{{ stats.terms }}</span><small>/{{ stats.terms_total }}</small></div><div class="cap">외운 무역 용어</div></div>
 </div>
 
 <div class="grid cols-2">
@@ -80,7 +80,7 @@
   </div>
 </div>
 
-<h2 style="margin:34px 0 14px">어디부터 볼까?</h2>
+<h2 style="margin:48px 0 20px">어디부터 볼까?</h2>
 <div class="grid cols-3">
   <a class="card hoverable menu-card" href="{{ url_for('industry') }}"><span class="m-emoji">🏭</span><h3>산업 공부</h3><p>개요 · 구조 · 제품 · 기업 · 시장 · 이슈</p></a>
   <a class="card hoverable menu-card" href="{{ url_for('company') }}"><span class="m-emoji">🏢</span><h3>기업 공부</h3><p>사업부문 · 해외사업 · 경쟁사 · 채용공고</p></a>
@@ -91,7 +91,7 @@
 </div>
 
 {% if recent_logs %}
-<h2 style="margin:34px 0 14px">최근 공부 기록</h2>
+<h2 style="margin:48px 0 20px">최근 공부 기록</h2>
 {% for l in recent_logs %}
   <div class="item">
     <div class="item-body">
