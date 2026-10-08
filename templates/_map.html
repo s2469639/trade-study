@@ -21,19 +21,9 @@
   <div class="map-tip" id="mapTip" hidden></div>
 
   <svg class="map" id="worldMap" viewBox="0 0 1200 730" role="img" aria-label="월드맵">
-    {# ---- 바다 (위까지 전부 바다. 위쪽은 살짝 더 깊은 색) ---- #}
-    <defs><linearGradient id="seaGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#BCDFF8"/><stop offset="1" stop-color="#DCEFFC"/></linearGradient></defs>
-    <rect class="sea-full" x="0" y="0" width="1200" height="620" fill="url(#seaGrad)"/>
+    {# ---- 바다 (위까지 전부 평평한 바다색) ---- #}
+    <rect class="sea-full" x="0" y="0" width="1200" height="620" fill="#D3E9FB"/>
     <g aria-hidden="true">
-      {# 해, 구름, 새는 바다 위를 떠다니는 장식 #}
-      <g transform="translate(74,54)"><g class="sun">
-        <g class="rays">{% for a in range(0, 360, 45) %}<path d="M0 -30 V-40" transform="rotate({{ a }})"/>{% endfor %}</g>
-        <circle r="21"/>
-      </g></g>
-      <g transform="translate(300,22)"><g class="cloud c1"><path d="M0 26 Q-4 8 16 10 Q22 -6 42 4 Q62 0 64 20 Q78 22 72 32 H6 Q-8 32 0 26 Z"/></g></g>
-      <g transform="translate(930,34)"><g class="cloud c2"><path d="M0 24 Q-4 8 14 10 Q20 -4 38 4 Q56 0 58 18 Q70 20 66 30 H6 Q-6 30 0 24 Z"/></g></g>
-      <g transform="translate(1110,8)"><g class="cloud c3"><path d="M0 20 Q-3 6 12 8 Q17 -3 31 3 Q45 0 47 14 Q57 15 54 23 H5 Q-5 23 0 20 Z"/></g></g>
-      {% for bx, by in [(520, 52), (700, 36)] %}<g transform="translate({{ bx }},{{ by }})"><path class="bird" style="animation-delay:-{{ loop.index }}s" d="M0 0 q8 -9 16 0 q8 -9 16 0"/></g>{% endfor %}
       {# 바다: 잔물결, 항로, 고래, 물고기, 윤슬 #}
       {% for wx, wy in [(150,40),(520,80),(880,40),(1120,100),(40,160),(380,150),(820,150),(1130,170),(50,300),(410,330),(790,225),(1160,340),(240,540),(660,545),(1000,545)] %}<path class="wave" style="animation-delay:-{{ loop.index * 0.6 }}s" d="M{{ wx }} {{ wy }} q7 -8 14 0 t14 0 t14 0"/>{% endfor %}
       <path class="route" d="M70 548 C 290 566, 470 530, 700 552 S 1040 530, 1160 548"/>
