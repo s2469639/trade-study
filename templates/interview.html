@@ -4,16 +4,16 @@
 
 {% block content %}
 <div class="page-head">
-  <h1>🎤 해외영업 연결</h1>
+  <h1>{{ ico('mic') }} 면접 회관</h1>
   <p>공부한 내용을 면접 답변으로 바꿔보는 곳이에요. 소리 내어 말해보고, 적어서 저장해요.</p>
-  {{ scene('면접', '연습', '나', '면접관') }}
+  {{ scene('면접', '회관', '삐약이', '면접관 파도') }}
 </div>
 
 <div class="tab-group">
   <div class="tabs" data-tabs="tab">
-    <button class="tab" data-tab="random">🎲 랜덤 연습</button>
-    <button class="tab" data-tab="list">📋 전체 질문</button>
-    <button class="tab" data-tab="explain">🗣️ 설명해보기</button>
+    <button class="tab" data-tab="random">{{ ico('dice') }} 랜덤 연습</button>
+    <button class="tab" data-tab="list">{{ ico('todo') }} 전체 질문</button>
+    <button class="tab" data-tab="explain">{{ ico('speech') }} 설명해보기</button>
   </div>
 
   {# ---------- 랜덤 연습 ---------- #}
@@ -30,8 +30,8 @@
         <div class="question-box" id="qText" style="margin:10px 0">버튼을 눌러 질문을 뽑아보세요!</div>
         <div class="quote-box muted" id="qHint" style="display:none"></div>
         <div class="row" style="margin-top:12px">
-          <button class="btn" id="pickBtn" type="button">🎲 질문 뽑기</button>
-          <button class="btn white" id="hintBtn" type="button">💡 힌트</button>
+          <button class="btn" id="pickBtn" type="button">{{ ico('dice') }} 질문 뽑기</button>
+          <button class="btn white" id="hintBtn" type="button">{{ ico('bulb') }} 힌트</button>
           <span class="spacer"></span>
           <span class="timer" id="timer">01:00</span>
           <button class="btn sky small" id="timerBtn" type="button">타이머</button>
@@ -50,7 +50,7 @@
   {# ---------- 전체 질문 ---------- #}
   <div class="tab-panel" data-panel="list">
     <div class="filter-bar" data-target="#qList">
-      <input class="search" type="text" data-target="#qList" placeholder="🔍 질문 검색">
+      <input class="search" type="text" data-target="#qList" placeholder="{{ ico('search') }} 질문 검색">
       <button class="chip active" data-key="scope" data-value="">전체</button>
       <button class="chip" data-key="scope" data-value="common">공통</button>
       {% for i in industries_all %}<button class="chip" data-key="scope" data-value="{{ i.id }}">{{ i.name }}</button>{% endfor %}
@@ -61,7 +61,7 @@
         <div class="card filterable" data-scope="{{ q.scope }}" style="margin-bottom:16px">
           <div class="row"><span class="tag yellow">{{ scope_names.get(q.scope, q.scope) }}</span></div>
           <h3 style="margin:8px 0 4px">{{ q.text }}</h3>
-          <div class="muted small">💡 {{ q.hint }}</div>
+          <div class="muted small">{{ ico('bulb') }} {{ q.hint }}</div>
           <details style="margin-top:10px">
             <summary class="btn small white" style="display:inline-flex">내 답변 {{ answers.get(q.id, [])|length }}개 · 쓰기</summary>
             <div style="margin-top:12px">
@@ -95,7 +95,7 @@
       <div>
         {% for e in explains %}
           <div class="card">
-            <div class="card-title-row"><h3 style="margin:0">🗣️ {{ e.topic }}</h3>{{ del_btn('explains', e.id) }}</div>
+            <div class="card-title-row"><h3 style="margin:0">{{ ico('speech') }} {{ e.topic }}</h3>{{ del_btn('explains', e.id) }}</div>
             <div style="white-space:pre-wrap">{{ e.text }}</div>
             {% if e.stuck %}<div class="quote-box"><b>막힌 부분</b> {{ e.stuck }}</div>{% endif %}
             <div class="item-meta">{{ e.date }}</div>
@@ -142,7 +142,7 @@
     qt.textContent = q.text;
     qt.classList.remove("swap"); void qt.offsetWidth; qt.classList.add("swap");
     const hint = document.getElementById("qHint");
-    hint.textContent = "💡 " + q.hint; hint.style.display = "none";
+    hint.textContent = "{{ ico('bulb') }} " + q.hint; hint.style.display = "none";
     document.getElementById("answerBtn").disabled = false;
     resetTimer();
   });
@@ -158,8 +158,8 @@
     try {
       await api("POST", "/api/answers", { question_id: current.id, text });
       e.target.reset();
-      toast("답변 저장 완료 ✏️");
-    } catch (err) { toast("저장 실패 😢"); }
+      toast("답변 저장 완료");
+    } catch (err) { toast("저장 실패"); }
   });
 
   let timerId = null, left = 60;
@@ -168,7 +168,7 @@
   function resetTimer() { clearInterval(timerId); timerId = null; left = 60; render(); }
   document.getElementById("timerBtn").addEventListener("click", () => {
     if (timerId) return resetTimer();
-    timerId = setInterval(() => { left--; render(); if (left <= 0) { clearInterval(timerId); timerId = null; toast("⏰ 시간 끝!"); } }, 1000);
+    timerId = setInterval(() => { left--; render(); if (left <= 0) { clearInterval(timerId); timerId = null; toast("시간 끝!"); } }, 1000);
   });
 </script>
 {% endblock %}

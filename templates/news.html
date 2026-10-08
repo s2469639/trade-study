@@ -4,9 +4,9 @@
 
 {% block content %}
 <div class="page-head">
-  <h1>📰 뉴스 & 시사</h1>
+  <h1>{{ ico('news') }} 신문사</h1>
   <p>뉴스를 읽고 끝내지 말고, 배경지식과 '왜 중요한지'까지 내 말로 적어요.</p>
-  {{ scene('뉴스', '읽기', '나', '세상') }}
+  {{ scene('신문사', '', '삐약이', '파도 선배') }}
 </div>
 
 <div class="grid cols-2" style="align-items:start">
@@ -30,13 +30,13 @@
       <div class="field"><label>② 배경지식 (알아야 이해되는 것)</label><textarea name="background" style="min-height:70px" placeholder="왜 이런 일이 생겼나? 관련 개념은?"></textarea></div>
       <div class="field"><label>③ 이 뉴스가 산업/무역에 왜 중요한가?</label><textarea name="why" style="min-height:70px" placeholder="누구에게 어떤 영향? 해외영업 관점에서는?"></textarea></div>
       <div class="field"><label>모르는 용어 (모르는 것 목록에도 자동 저장)</label><input type="text" name="_unknown" placeholder="예) 상계관세"></div>
-      <button class="btn" type="submit">뉴스 저장 📌</button>
+      <button class="btn" type="submit">뉴스 저장 {{ ico('pin') }}</button>
     </form>
   </div>
 
   <div>
     <div class="filter-bar" data-target="#newsList">
-      <input class="search" type="text" data-target="#newsList" placeholder="🔍 뉴스 검색">
+      <input class="search" type="text" data-target="#newsList" placeholder="{{ ico('search') }} 뉴스 검색">
       <button class="chip active" data-key="category" data-value="">전체</button>
       <button class="chip" data-key="category" data-value="산업 뉴스">산업</button>
       <button class="chip" data-key="category" data-value="무역·경제">무역·경제</button>
@@ -61,7 +61,7 @@
           <div class="item-meta">{{ n.date }}</div>
         </div>
       {% else %}
-        <div class="empty">저장한 뉴스가 없어요.<br>왼쪽에 기사 하나를 정리해볼까요? ✏️</div>
+        <div class="empty">저장한 뉴스가 없어요.<br>왼쪽에 기사 하나를 정리해볼까요? {{ ico('pencil') }}</div>
       {% endfor %}
     </div>
   </div>

@@ -4,9 +4,9 @@
 
 {% block content %}
 <div class="page-head">
-  <h1>📒 나의 공부 기록</h1>
+  <h1>{{ ico('notebook') }} 나의 일지</h1>
   <p>지금까지 공부한 모든 게 여기 모여요.</p>
-  {{ scene('나의', '기록', '오늘의 나', '미래의 나') }}
+  {{ scene('나의', '일지', '삐약이', '파도 선배') }}
 </div>
 
 {% macro note_group(notes) %}
@@ -20,19 +20,19 @@
 
 <div class="tab-group">
   <div class="tabs" data-tabs="tab">
-    <button class="tab" data-tab="timeline">🕒 전체 타임라인</button>
-    <button class="tab" data-tab="industry">🏭 산업별</button>
-    <button class="tab" data-tab="company">🏢 기업별</button>
-    <button class="tab" data-tab="trade">🚢 무역</button>
-    <button class="tab" data-tab="news">📰 뉴스</button>
-    <button class="tab" data-tab="writing">✍️ 내가 쓴 글</button>
-    <button class="tab" data-tab="unknown">❓ 모르는 것</button>
-    <button class="tab" data-tab="backup">💾 백업</button>
+    <button class="tab" data-tab="timeline">{{ ico('clock') }} 전체 타임라인</button>
+    <button class="tab" data-tab="industry">{{ ico('factory') }} 산업별</button>
+    <button class="tab" data-tab="company">{{ ico('building') }} 기업별</button>
+    <button class="tab" data-tab="trade">{{ ico('ship') }} 무역</button>
+    <button class="tab" data-tab="news">{{ ico('news') }} 뉴스</button>
+    <button class="tab" data-tab="writing">{{ ico('pencil') }} 내가 쓴 글</button>
+    <button class="tab" data-tab="unknown">{{ ico('question') }} 모르는 것</button>
+    <button class="tab" data-tab="backup">{{ ico('save') }} 백업</button>
   </div>
 
   <div class="tab-panel" data-panel="timeline">
     <div class="filter-bar" data-target="#timeline">
-      <input class="search" type="text" data-target="#timeline" placeholder="🔍 기록 검색">
+      <input class="search" type="text" data-target="#timeline" placeholder="{{ ico('search') }} 기록 검색">
       <button class="chip active" data-key="label" data-value="">전체</button>
       {% for l in ['공부','뉴스','글','메모','설명','면접답변'] %}<button class="chip" data-key="label" data-value="{{ l }}">{{ l }}</button>{% endfor %}
     </div>
@@ -77,7 +77,7 @@
 
   <div class="tab-panel" data-panel="unknown">
     <div class="card sky">
-      <h2>❓ 모르는 것 / 추가 공부할 것</h2>
+      <h2>{{ ico('question') }} 모르는 것 / 추가 공부할 것</h2>
       <form data-collection="unknowns" class="row" style="margin-bottom:14px; flex-wrap:nowrap">
         <input type="text" name="text" required placeholder="모르는 것 추가">
         <button class="btn small" type="submit">추가</button>
@@ -85,7 +85,7 @@
       {% for u in unknowns %}
         <div class="item {{ 'done' if u.done }}">
           <input type="checkbox" data-toggle="unknowns/{{ u.id }}" {{ 'checked' if u.done }}>
-          <div class="item-body"><div class="item-text">{{ u.text }}</div>{% if u.source %}<div class="item-meta">📰 {{ u.source }}</div>{% endif %}<div class="item-meta">{{ u.date }}</div></div>
+          <div class="item-body"><div class="item-text">{{ u.text }}</div>{% if u.source %}<div class="item-meta">{{ ico('news') }} {{ u.source }}</div>{% endif %}<div class="item-meta">{{ u.date }}</div></div>
           {{ del_btn('unknowns', u.id) }}
         </div>
       {% else %}<div class="empty">모르는 게 없어요! (진짜로?)</div>{% endfor %}
@@ -95,12 +95,12 @@
   <div class="tab-panel" data-panel="backup">
     <div class="grid cols-2">
       <div class="card">
-        <h2>💾 내보내기</h2>
+        <h2>{{ ico('save') }} 내보내기</h2>
         <p>내 기록 전체를 파일 하나로 저장해요. 가끔 받아두면 안심!</p>
         <a class="btn" href="{{ url_for('export_data') }}">백업 파일 받기</a>
       </div>
       <div class="card">
-        <h2>📂 불러오기</h2>
+        <h2>{{ ico('upload') }} 불러오기</h2>
         <p>백업 파일을 올리면 같은 이름의 기록이 <b>덮어써져요</b>.</p>
         <form method="post" action="{{ url_for('import_data') }}" enctype="multipart/form-data" onsubmit="return confirm('기존 기록이 덮어써져요. 계속할까요?')">
           <div class="field"><input type="file" name="file" accept=".json" required></div>

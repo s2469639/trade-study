@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% from "_macros.html" import scene %}
+{% block title %}무역 항구 이야기 · 무역공부노트{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h1>{{ ico('ship') }} 무역 항구 이야기</h1>
+  <p>신입 {{ cast.player.name }}와 {{ cast.mentor.name }}가 한 건의 수출 거래를 처음부터 끝까지 해내는 이야기예요. 선택지를 골라가며 무역 실무를 몸으로 익혀요.</p>
+  {{ scene('무역', '항구', cast.player.name, cast.mentor.name) }}
+</div>
+
+<div class="chapter-list">
+  {% for ch in chapters %}
+    {% set d = done.get(ch.id) %}
+    {% set prev_done = loop.first or (chapters[loop.index0 - 1].id in done) %}
+    <a class="chapter card {{ 'locked' if not prev_done }} {{ 'cleared' if d }}" href="{{ url_for('story_play', chapter_id=ch.id) if prev_done else '#' }}">
+      <div class="ch-no">{{ ch.no }}</div>
+      <div class="ch-body">
+        <h2>{{ ch.title }}</h2>
+        <p class="muted">{{ ch.blurb }}</p>
+        <span class="note">{{ ch.place }} · 상대: {{ ch.buyer.name }}</span>
+      </div>
+      <div class="ch-state">
+        {% if d %}
+          <div class="ch-stars">
+            {% for n in range(3) %}<svg class="ico star {{ '' if n < d.stars else 'empty' }}" aria-hidden="true"><use href="#i-star"/></svg>{% endfor %}
+          </div>
+          <span class="note">다시 하기</span>
+        {% elif prev_done %}
+          <span class="btn small">시작하기</span>
+        {% else %}
+          {{ ico('lock', 'lg') }}<span class="note">앞 챕터를 먼저 깨요</span>
+        {% endif %}
+      </div>
+    </a>
+  {% endfor %}
+</div>
+<p class="note" style="text-align:center; margin-top:18px">틀리지 않고 풀수록 별이 많아져요. 챕터를 깰 때마다 경험치를 얻어 모자에 장식이 생겨요.</p>
+{% endblock %}

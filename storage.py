@@ -91,13 +91,38 @@ def delete(col, item_id):
     return len(new_items) != len(items)
 
 
+def get_progress():
+    """게임 진행 상황(섬 방문, 퀴즈 통과, 스토리 클리어 등)은 목록이 아니라 하나의 사전(dict)으로 저장."""
+    path = USER_DIR / "progress.json"
+    if not path.exists():
+        return {}
+    try:
+        with open(path, encoding="utf-8") as f:
+            data = json.load(f)
+        return data if isinstance(data, dict) else {}
+    except (json.JSONDecodeError, OSError):
+        return {}
+
+
+def save_progress(data):
+    USER_DIR.mkdir(parents=True, exist_ok=True)
+    tmp = USER_DIR / "progress.tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+    os.replace(tmp, USER_DIR / "progress.json")
+
+
 def export_all():
-    return {col: read_all(col) for col in COLLECTIONS}
+    data = {col: read_all(col) for col in COLLECTIONS}
+    data["progress"] = get_progress()
+    return data
 
 
 def import_all(data):
     """내보낸 JSON을 다시 불러오기 (같은 이름의 기록은 덮어씀)."""
     count = 0
+    if isinstance(data.get("progress"), dict):
+        save_progress(data["progress"])
     for col in COLLECTIONS:
         if isinstance(data.get(col), list):
             write_all(col, data[col])

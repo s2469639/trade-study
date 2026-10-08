@@ -18,7 +18,7 @@ function toast(msg) {
   toast._t = setTimeout(() => el.classList.remove("show"), 1800);
 }
 
-// 🎉 톡 터지는 색종이 (x, y 는 화면 좌표)
+// 톡 터지는 색종이 (x, y 는 화면 좌표)
 function burst(x, y, count = 16) {
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   const colors = ["#FFD43B", "#4DABF7", "#2F7FD1", "#FFF1B8", "#D9EDFD"];
@@ -114,9 +114,9 @@ document.querySelectorAll("form[data-collection]").forEach((form) => {
     try {
       await api("POST", "/api/" + form.dataset.collection, data);
       if (unknown) await api("POST", "/api/unknowns", { text: unknown, source: data.title || "" });
-      reloadWithToast("저장했어요 ✏️");
+      reloadWithToast("저장했어요");
     } catch (err) {
-      toast("저장 실패 😢 서버가 켜져 있나요?");
+      toast("저장 실패. 서버가 켜져 있나요?");
     }
   });
 });
@@ -127,8 +127,8 @@ document.addEventListener("click", async (e) => {
   if (del) {
     if (!confirm("정말 지울까요?")) return;
     const [col, id] = del.dataset.del.split("/");
-    try { await api("DELETE", `/api/${col}/${id}`); reloadWithToast("지웠어요 🗑️"); }
-    catch (err) { toast("삭제 실패 😢"); }
+    try { await api("DELETE", `/api/${col}/${id}`); reloadWithToast("지웠어요"); }
+    catch (err) { toast("삭제 실패"); }
     return;
   }
 
@@ -138,11 +138,11 @@ document.addEventListener("click", async (e) => {
       const r = await api("POST", `/api/term/${term.dataset.term}/toggle`);
       const card = term.closest(".term");
       card.classList.toggle("known", r.known);
-      term.textContent = r.known ? "✅ 외웠어요!" : "☐ 아직 헷갈려요";
+      term.textContent = r.known ? "외웠어요!" : "아직 헷갈려요";
       if (r.known) burstAt(term);
       const counter = document.getElementById("known-count");
       if (counter) counter.textContent = document.querySelectorAll(".term.known").length;
-    } catch (err) { toast("저장 실패 😢"); }
+    } catch (err) { toast("저장 실패"); }
   }
 });
 
@@ -154,7 +154,7 @@ document.addEventListener("change", async (e) => {
     await api("PATCH", `/api/${col}/${id}`, { done: t.checked });
     t.closest(".item").classList.toggle("done", t.checked);
     if (t.checked) burstAt(t);
-  } catch (err) { toast("저장 실패 😢"); t.checked = !t.checked; }
+  } catch (err) { toast("저장 실패"); t.checked = !t.checked; }
 });
 
 // ---------- 필터 / 검색 ----------
@@ -242,7 +242,7 @@ document.querySelectorAll("[data-count]").forEach((el) => {
 
 // ---------- 캐릭터: 누르면 폴짝 + 말풍선, 눈동자는 마우스를 따라감 ----------
 (function () {
-  const lines = ["오늘도 한 줄!", "화이팅 ✊", "FOB 기억나?", "수출은 타이밍!", "뉴스 하나만 더", "L/C 외웠어?", "잘하고 있어 :)", "면접 가보자!"];
+  const lines = ["오늘도 한 줄!", "화이팅!", "FOB 기억나?", "수출은 타이밍!", "뉴스 하나만 더", "L/C 외웠어?", "잘하고 있어 :)", "면접 가보자!"];
   document.querySelectorAll(".scene .char").forEach((c) => {
     c.addEventListener("click", () => {
       c.classList.remove("hop"); void c.getBoundingClientRect(); c.classList.add("hop");
@@ -280,3 +280,47 @@ document.querySelectorAll("[data-count]").forEach((el) => {
 // 폰트가 늦게 불러와져 글자 폭이 달라지면 탭 박스 위치를 다시 맞춘다
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => dispatchEvent(new Event("resize")));
 addEventListener("load", () => dispatchEvent(new Event("resize")));
+
+// ---------- 월드맵: 누르면 삐약이의 배가 그 장소로 가서 페이지를 열어요 ----------
+(function () {
+  const map = document.getElementById("worldMap");
+  if (!map) return;
+  const ship = document.getElementById("ship");
+  const spots = [...map.querySelectorAll(".spot")];
+  const find = (key) => spots.find((s) => s.dataset.key === key);
+  const move = (spot) => { ship.style.transform = `translate(${spot.dataset.x}px, ${spot.dataset.y}px)`; };
+
+  let last = null;
+  try { last = localStorage.getItem("shipAt"); } catch (e) {}
+  const start = find(last) || find("story");
+  if (start) { ship.classList.add("no-anim"); move(start); void ship.getBoundingClientRect(); ship.classList.remove("no-anim"); }
+
+  spots.forEach((s) => s.addEventListener("click", (e) => {
+    e.preventDefault();
+    try { localStorage.setItem("shipAt", s.dataset.key); } catch (err) {}
+    ship.classList.add("sailing");
+    move(s);
+    setTimeout(() => (location.href = s.getAttribute("href")), 950);
+  }));
+})();
+
+// ---------- 새로 얻은 스탬프 / 레벨업 / 모자 장식 축하 ----------
+(function () {
+  const c = window.CELEBRATE;
+  if (!c) return;
+  const box = document.getElementById("celebrate");
+  if (c.level && c.level > 1) {
+    const mini = document.querySelector(".me-mini");
+    const items = (c.items || []).map((it) => `<li><b>${it.name}</b><span>${it.desc}</span></li>`).join("");
+    box.innerHTML = `<div class="celebrate-card"><svg class="ico star big" aria-hidden="true"><use href="#i-sparkle"/></svg>
+      <h2>레벨 ${c.level}!</h2><div class="celebrate-char"></div>
+      ${items ? `<p class="note">새로운 모자 장식을 얻었어요</p><ul>${items}</ul>` : ""}
+      <button class="btn" type="button" id="celebrateOk">좋아요!</button></div>`;
+    if (mini) box.querySelector(".celebrate-char").appendChild(mini.cloneNode(true));
+    box.hidden = false;
+    setTimeout(() => burst(innerWidth / 2, innerHeight / 2, 40), 250);
+    box.querySelector("#celebrateOk").addEventListener("click", () => (box.hidden = true));
+  } else if (c.stamps && c.stamps.length) {
+    setTimeout(() => { toast(`스탬프 ${c.stamps.length}개를 받았어요`); burst(innerWidth / 2, innerHeight - 60, 24); }, 400);
+  }
+})();

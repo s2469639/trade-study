@@ -1,0 +1,16 @@
+{
+  "levels": [0, 40, 100, 180, 280, 400, 550, 720, 920, 1150],
+  "player": {"name": "삐약이", "title": "신입 해외영업 지망생", "hat": "#FFD43B"},
+  "mentor": {"name": "파도 선배", "title": "10년차 해외영업 사수", "hat": "#4DABF7"},
+  "items": [
+    {"id": "star",   "level": 2,  "slot": "pin",  "name": "반짝 별핀",       "desc": "모자 옆에 콕 꽂은 작은 별. 첫 걸음을 뗀 기념!"},
+    {"id": "ribbon", "level": 3,  "slot": "band", "name": "나비 리본",       "desc": "모자띠에 리본이 묶였어요. 슬슬 폼이 나네요."},
+    {"id": "flower", "level": 4,  "slot": "top",  "name": "해바라기 꽃",     "desc": "모자 위에 꽃이 피었어요. 공부가 자라고 있다는 증거."},
+    {"id": "prop",   "level": 5,  "slot": "top",  "name": "빙글 프로펠러",   "desc": "머리 위에서 빙글빙글. 이제 좀 날아오르는 중!"},
+    {"id": "anchor", "level": 6,  "slot": "pin",  "name": "항해사 닻 배지",  "desc": "무역의 바다를 항해하는 사람에게 주는 배지."},
+    {"id": "gold",   "level": 7,  "slot": "band", "name": "금빛 모자띠",     "desc": "리본이 금띠로 바뀌었어요. 눈에 확 띄는 베테랑 느낌."},
+    {"id": "flag",   "level": 8,  "slot": "top",  "name": "선장 깃발",       "desc": "모자 위에 깃발이 펄럭여요. 배의 선장님 등장."},
+    {"id": "shades", "level": 9,  "slot": "face", "name": "멋쟁이 선글라스", "desc": "눈부신 성과에는 선글라스가 필수죠."},
+    {"id": "crown",  "level": 10, "slot": "top",  "name": "무역왕 왕관",     "desc": "드디어 왕관! 이 바다의 무역왕은 바로 당신."}
+  ]
+}
