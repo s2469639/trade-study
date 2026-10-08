@@ -33,10 +33,27 @@ COLLECTIONS = [
 ]
 
 
-def load_sample(name):
-    """data/ 폴더의 샘플 JSON 읽기. 예: load_sample('industries')"""
+def _raw(name):
     with open(DATA_DIR / f"{name}.json", encoding="utf-8") as f:
         return json.load(f)
+
+
+def load_sample(name):
+    """data/ 폴더의 샘플 JSON 읽기. 예: load_sample('industries')
+    산업에 "hidden": true 를 적으면 그 산업과 딸린 기업·면접 질문이 화면에서 빠져요. (지우지 않고 숨기기)"""
+    data = _raw(name)
+    if name not in ("industries", "companies", "interview"):
+        return data
+    industries = _raw("industries")
+    hidden = {i["id"] for i in industries if i.get("hidden")}
+    if not hidden:
+        return data
+    if name == "industries":
+        return [i for i in data if i["id"] not in hidden]
+    hidden_cos = {c["id"] for c in _raw("companies") if c["industry"] in hidden}
+    if name == "companies":
+        return [c for c in data if c["industry"] not in hidden]
+    return [q for q in data if q["scope"] not in hidden and q["scope"] not in hidden_cos]
 
 
 def _path(col):

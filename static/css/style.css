@@ -738,5 +738,3 @@ input[type=number]:focus { background: #FFFDF0; box-shadow: 0 0 0 4px #BFE0FB; }
 /* 마을은 5개로, 섬 바로가기 줄은 좁은 화면에서만 (큰 화면에서는 위의 섬과 같은 내용이라 숨겨요) */
 .isle-chips { display: none; }
 @media (max-width: 960px) { .isle-chips { display: flex; } }
-.hud-pill.link { text-decoration: none; color: var(--ink); transition: transform .3s var(--spring), background .2s; }
-.hud-pill.link:hover { transform: translateY(-2px) rotate(-1deg); background: var(--yellow-soft); }

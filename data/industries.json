@@ -494,7 +494,7 @@
     "region": "heavy",
     "map": {
       "x": 600,
-      "y": 140,
+      "y": 150,
       "shape": 0,
       "color": "#D9EDFD"
     }
@@ -621,7 +621,8 @@
       "y": 365,
       "shape": 1,
       "color": "#E9ECEF"
-    }
+    },
+    "hidden": true
   },
   {
     "id": "chem",
@@ -741,7 +742,7 @@
     "sample": true,
     "region": "heavy",
     "map": {
-      "x": 700,
+      "x": 600,
       "y": 375,
       "shape": 2,
       "color": "#FFE8CC"
