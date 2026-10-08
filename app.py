@@ -7,7 +7,7 @@ import json
 import re
 from datetime import date, datetime
 
-from flask import Flask, g, jsonify, render_template, request, send_file, redirect, url_for
+from flask import Flask, g, jsonify, make_response, render_template, request, send_file, redirect, url_for
 from markupsafe import Markup
 
 import game
@@ -362,7 +362,10 @@ def closet_preview():
         chosen = {}
     color = next((c for c in status["colors"] if c["id"] == request.args.get("color") and c["unlocked"]), None)
     hat = color["color"] if color else status["player"]["hat"]
-    return render_template("_preview.html", hat=hat, items=game.resolve_worn(status, chosen if isinstance(chosen, dict) else {}))
+    worn = game.resolve_worn(status, chosen if isinstance(chosen, dict) else {})
+    resp = make_response(render_template("_preview.html", hat=hat, items=[i for i in worn.values() if i]))
+    resp.headers["X-Worn"] = json.dumps({k: v for k, v in worn.items()})
+    return resp
 
 
 @app.post("/api/closet")

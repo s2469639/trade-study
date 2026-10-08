@@ -106,3 +106,9 @@
   </div>
 </div>
 {%- endmacro %}
+
+
+{# 옷장 칸: 장식 하나를 단 작은 캐릭터 머리 (items 비우면 맨머리) #}
+{% macro mini(hat, item='') -%}
+<svg class="mini-char" viewBox="20 -24 60 100" aria-hidden="true">{{ char(0, hat, false, '', '', [item] if item else [], 0) }}</svg>
+{%- endmacro %}

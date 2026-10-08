@@ -13,9 +13,14 @@
     clearTimeout(t);
     t = setTimeout(async () => {
       const q = new URLSearchParams({ color: sel.color, slots: JSON.stringify(sel.slots) });
-      const html = await (await fetch("/closet/preview?" + q)).text();
+      const res = await fetch("/closet/preview?" + q);
+      const worn = JSON.parse(res.headers.get("X-Worn") || "{}");
+      const html = await res.text();
       const box = $("#closetPreview");
       box.innerHTML = html;
+      document.querySelectorAll(".slot-card").forEach((card) => {         // 지금 입고 있는 칸 표시
+        card.querySelectorAll(".tile").forEach((x) => x.classList.toggle("on", (worn[card.dataset.slot] || "none") === x.dataset.val));
+      });
       const svg = box.firstElementChild; svg.classList.remove("pop"); void svg.getBoundingClientRect(); svg.classList.add("pop");
     }, 60);
   }
@@ -23,22 +28,17 @@
   $("#swatches").addEventListener("click", (e) => {
     const b = e.target.closest(".swatch"); if (!b || b.disabled) return;
     document.querySelectorAll(".swatch").forEach((x) => x.classList.toggle("on", x === b));
-    sel.color = b.dataset.color; preview();
+    sel.color = b.dataset.color;
+    document.querySelectorAll(".mini-char .skin[style*='fill']").forEach((p) => { if ((p.getAttribute("d") || "").startsWith("M33 30")) p.style.fill = b.style.getPropertyValue("--c"); });
+    preview();
   });
   document.querySelectorAll(".slot-card").forEach((card) => card.addEventListener("click", (e) => {
-    const b = e.target.closest(".opt"); if (!b || b.disabled) return;
-    card.querySelectorAll(".opt").forEach((x) => x.classList.toggle("on", x === b));
+    const b = e.target.closest(".tile"); if (!b || b.disabled) return;
+    card.querySelectorAll(".tile").forEach((x) => x.classList.toggle("on", x === b));
     sel.slots[card.dataset.slot] = b.dataset.val; preview();
   }));
-  $("#closetName").addEventListener("input", (e) => { $("#previewName").textContent = e.target.value.trim() || "(이름)"; });
 
-  function setAll(val) {
-    CLOSET.slotIds.forEach((id) => (sel.slots[id] = val));
-    document.querySelectorAll(".slot-card").forEach((card) =>
-      card.querySelectorAll(".opt").forEach((x) => x.classList.toggle("on", x.dataset.val === val)));
-    preview();
-  }
-  $("#closetAuto").addEventListener("click", () => setAll("auto"));
+  $("#closetAuto").addEventListener("click", () => { CLOSET.slotIds.forEach((id) => (sel.slots[id] = "auto")); preview(); });
 
   $("#closetSave").addEventListener("click", async () => {
     const slots = {};

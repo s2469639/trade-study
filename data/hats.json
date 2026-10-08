@@ -1,37 +1,324 @@
 {
-  "levels": [0, 40, 100, 180, 280, 400, 550, 720, 920, 1150],
-  "player": {"name": "삐약이", "title": "신입 해외영업 지망생", "hat": "#FFD43B"},
-  "mentor": {"name": "파도 선배", "title": "10년차 해외영업 사수", "hat": "#4DABF7"},
+  "levels": [
+    0,
+    40,
+    100,
+    180,
+    280,
+    400,
+    550,
+    720,
+    920,
+    1150
+  ],
+  "player": {
+    "name": "삐약이",
+    "title": "신입 해외영업 지망생",
+    "hat": "#FFD43B"
+  },
+  "mentor": {
+    "name": "파도 선배",
+    "title": "10년차 해외영업 사수",
+    "hat": "#4DABF7"
+  },
   "slots": [
-    {"id": "top", "name": "모자 위"}, {"id": "band", "name": "모자띠"}, {"id": "pin", "name": "핀·배지"},
-    {"id": "face", "name": "얼굴"}, {"id": "neck", "name": "목"}, {"id": "cheek", "name": "볼"}
+    {
+      "id": "top",
+      "name": "모자 위"
+    },
+    {
+      "id": "band",
+      "name": "모자띠"
+    },
+    {
+      "id": "pin",
+      "name": "핀·배지"
+    },
+    {
+      "id": "face",
+      "name": "얼굴"
+    },
+    {
+      "id": "neck",
+      "name": "목"
+    },
+    {
+      "id": "cheek",
+      "name": "볼"
+    }
   ],
   "items": [
-    {"id": "star",    "slot": "pin",   "rank": 2, "unlock": {"type": "level", "n": 2},    "name": "반짝 별핀",         "desc": "모자 옆에 콕 꽂은 작은 별. 첫 걸음을 뗀 기념!"},
-    {"id": "ribbon",  "slot": "band",  "rank": 3, "unlock": {"type": "level", "n": 3},    "name": "나비 리본",         "desc": "모자띠에 리본이 묶였어요. 슬슬 폼이 나네요."},
-    {"id": "flower",  "slot": "top",   "rank": 4, "unlock": {"type": "level", "n": 4},    "name": "해바라기 꽃",       "desc": "모자 위에 꽃이 피었어요. 공부가 자라고 있다는 증거."},
-    {"id": "prop",    "slot": "top",   "rank": 5, "unlock": {"type": "level", "n": 5},    "name": "빙글 프로펠러",     "desc": "머리 위에서 빙글빙글. 이제 좀 날아오르는 중!"},
-    {"id": "anchor",  "slot": "pin",   "rank": 6, "unlock": {"type": "level", "n": 6},    "name": "항해사 닻 배지",    "desc": "무역의 바다를 항해하는 사람에게 주는 배지."},
-    {"id": "gold",    "slot": "band",  "rank": 7, "unlock": {"type": "level", "n": 7},    "name": "금빛 모자띠",       "desc": "리본이 금띠로 바뀌었어요. 눈에 확 띄는 베테랑 느낌."},
-    {"id": "flag",    "slot": "top",   "rank": 8, "unlock": {"type": "level", "n": 8},    "name": "선장 깃발",         "desc": "모자 위에 깃발이 펄럭여요. 배의 선장님 등장."},
-    {"id": "shades",  "slot": "face",  "rank": 9, "unlock": {"type": "level", "n": 9},    "name": "멋쟁이 선글라스",   "desc": "눈부신 성과에는 선글라스가 필수죠."},
-    {"id": "crown",   "slot": "top",   "rank": 10, "unlock": {"type": "level", "n": 10},  "name": "무역왕 왕관",       "desc": "드디어 왕관! 이 바다의 무역왕은 바로 당신."},
-    {"id": "glasses", "slot": "face",  "rank": 2, "unlock": {"type": "chapters", "n": 1}, "name": "똑똑이 동그라미 안경", "desc": "첫 스토리를 마친 기념. 서류도 척척 읽을 것 같아요."},
-    {"id": "bowtie",  "slot": "neck",  "rank": 2, "unlock": {"type": "chapters", "n": 2}, "name": "멋쟁이 나비넥타이", "desc": "신용장 챕터를 마친 기념. 계약서 서명식에 딱이에요."},
-    {"id": "scarf",   "slot": "neck",  "rank": 1, "unlock": {"type": "streak", "n": 3},   "name": "포근 스카프",       "desc": "3일 연속 공부한 기념. 꾸준함은 따뜻해요."},
-    {"id": "blush",   "slot": "cheek", "rank": 1, "unlock": {"type": "stamps", "n": 3},   "name": "발그레 볼터치",     "desc": "스탬프를 3개 모은 기념. 뿌듯해서 볼이 발그레."},
-    {"id": "heart",   "slot": "pin",   "rank": 4, "unlock": {"type": "terms", "n": 10},   "name": "하트 핀",           "desc": "무역 용어를 10개 외운 기념. 용어 사랑이 넘쳐요."},
-    {"id": "feather", "slot": "top",   "rank": 6, "unlock": {"type": "stamps", "n": 6},   "name": "깃털 장식",         "desc": "스탬프를 6개 모은 기념. 가볍고 멋진 깃털."}
+    {
+      "id": "star",
+      "slot": "pin",
+      "rank": 2,
+      "unlock": {
+        "type": "level",
+        "n": 2
+      },
+      "name": "반짝 별핀",
+      "desc": "모자 옆에 콕 꽂은 작은 별. 첫 걸음을 뗀 기념!",
+      "short": "별핀"
+    },
+    {
+      "id": "ribbon",
+      "slot": "band",
+      "rank": 3,
+      "unlock": {
+        "type": "level",
+        "n": 3
+      },
+      "name": "나비 리본",
+      "desc": "모자띠에 리본이 묶였어요. 슬슬 폼이 나네요.",
+      "short": "리본"
+    },
+    {
+      "id": "flower",
+      "slot": "top",
+      "rank": 4,
+      "unlock": {
+        "type": "level",
+        "n": 4
+      },
+      "name": "해바라기 꽃",
+      "desc": "모자 위에 꽃이 피었어요. 공부가 자라고 있다는 증거.",
+      "short": "꽃"
+    },
+    {
+      "id": "prop",
+      "slot": "top",
+      "rank": 5,
+      "unlock": {
+        "type": "level",
+        "n": 5
+      },
+      "name": "빙글 프로펠러",
+      "desc": "머리 위에서 빙글빙글. 이제 좀 날아오르는 중!",
+      "short": "프로펠러"
+    },
+    {
+      "id": "anchor",
+      "slot": "pin",
+      "rank": 6,
+      "unlock": {
+        "type": "level",
+        "n": 6
+      },
+      "name": "항해사 닻 배지",
+      "desc": "무역의 바다를 항해하는 사람에게 주는 배지.",
+      "short": "닻 배지"
+    },
+    {
+      "id": "gold",
+      "slot": "band",
+      "rank": 7,
+      "unlock": {
+        "type": "level",
+        "n": 7
+      },
+      "name": "금빛 모자띠",
+      "desc": "리본이 금띠로 바뀌었어요. 눈에 확 띄는 베테랑 느낌.",
+      "short": "금띠"
+    },
+    {
+      "id": "flag",
+      "slot": "top",
+      "rank": 8,
+      "unlock": {
+        "type": "level",
+        "n": 8
+      },
+      "name": "선장 깃발",
+      "desc": "모자 위에 깃발이 펄럭여요. 배의 선장님 등장.",
+      "short": "깃발"
+    },
+    {
+      "id": "shades",
+      "slot": "face",
+      "rank": 9,
+      "unlock": {
+        "type": "level",
+        "n": 9
+      },
+      "name": "멋쟁이 선글라스",
+      "desc": "눈부신 성과에는 선글라스가 필수죠.",
+      "short": "선글라스"
+    },
+    {
+      "id": "crown",
+      "slot": "top",
+      "rank": 10,
+      "unlock": {
+        "type": "level",
+        "n": 10
+      },
+      "name": "무역왕 왕관",
+      "desc": "드디어 왕관! 이 바다의 무역왕은 바로 당신.",
+      "short": "왕관"
+    },
+    {
+      "id": "glasses",
+      "slot": "face",
+      "rank": 2,
+      "unlock": {
+        "type": "chapters",
+        "n": 1
+      },
+      "name": "똑똑이 동그라미 안경",
+      "desc": "첫 스토리를 마친 기념. 서류도 척척 읽을 것 같아요.",
+      "short": "안경"
+    },
+    {
+      "id": "bowtie",
+      "slot": "neck",
+      "rank": 2,
+      "unlock": {
+        "type": "chapters",
+        "n": 2
+      },
+      "name": "멋쟁이 나비넥타이",
+      "desc": "신용장 챕터를 마친 기념. 계약서 서명식에 딱이에요.",
+      "short": "나비넥타이"
+    },
+    {
+      "id": "scarf",
+      "slot": "neck",
+      "rank": 1,
+      "unlock": {
+        "type": "streak",
+        "n": 3
+      },
+      "name": "포근 스카프",
+      "desc": "3일 연속 공부한 기념. 꾸준함은 따뜻해요.",
+      "short": "스카프"
+    },
+    {
+      "id": "blush",
+      "slot": "cheek",
+      "rank": 1,
+      "unlock": {
+        "type": "stamps",
+        "n": 3
+      },
+      "name": "발그레 볼터치",
+      "desc": "스탬프를 3개 모은 기념. 뿌듯해서 볼이 발그레.",
+      "short": "볼터치"
+    },
+    {
+      "id": "heart",
+      "slot": "pin",
+      "rank": 4,
+      "unlock": {
+        "type": "terms",
+        "n": 10
+      },
+      "name": "하트 핀",
+      "desc": "무역 용어를 10개 외운 기념. 용어 사랑이 넘쳐요.",
+      "short": "하트 핀"
+    },
+    {
+      "id": "feather",
+      "slot": "top",
+      "rank": 6,
+      "unlock": {
+        "type": "stamps",
+        "n": 6
+      },
+      "name": "깃털 장식",
+      "desc": "스탬프를 6개 모은 기념. 가볍고 멋진 깃털.",
+      "short": "깃털"
+    }
   ],
   "colors": [
-    {"id": "yellow", "name": "병아리 노랑", "color": "#FFD43B", "unlock": {"type": "level", "n": 1}},
-    {"id": "sky",    "name": "하늘 파랑",   "color": "#74C0FC", "unlock": {"type": "chapters", "n": 1}},
-    {"id": "pink",   "name": "복숭아 분홍", "color": "#FFA8C5", "unlock": {"type": "level", "n": 3}},
-    {"id": "mint",   "name": "민트",       "color": "#63E6BE", "unlock": {"type": "stamps", "n": 2}},
-    {"id": "orange", "name": "귤색",       "color": "#FFA94D", "unlock": {"type": "chapters", "n": 2}},
-    {"id": "purple", "name": "라벤더",     "color": "#B197FC", "unlock": {"type": "streak", "n": 5}},
-    {"id": "red",    "name": "딸기 빨강",   "color": "#FF6B6B", "unlock": {"type": "stamps", "n": 5}},
-    {"id": "navy",   "name": "밤하늘",     "color": "#5C7CFA", "unlock": {"type": "level", "n": 6}},
-    {"id": "black",  "name": "먹물 검정",   "color": "#495057", "unlock": {"type": "chapters", "n": 4}}
+    {
+      "id": "yellow",
+      "name": "병아리 노랑",
+      "color": "#FFD43B",
+      "unlock": {
+        "type": "level",
+        "n": 1
+      },
+      "short": "노랑"
+    },
+    {
+      "id": "sky",
+      "name": "하늘 파랑",
+      "color": "#74C0FC",
+      "unlock": {
+        "type": "chapters",
+        "n": 1
+      },
+      "short": "하늘"
+    },
+    {
+      "id": "pink",
+      "name": "복숭아 분홍",
+      "color": "#FFA8C5",
+      "unlock": {
+        "type": "level",
+        "n": 3
+      },
+      "short": "분홍"
+    },
+    {
+      "id": "mint",
+      "name": "민트",
+      "color": "#63E6BE",
+      "unlock": {
+        "type": "stamps",
+        "n": 2
+      },
+      "short": "민트"
+    },
+    {
+      "id": "orange",
+      "name": "귤색",
+      "color": "#FFA94D",
+      "unlock": {
+        "type": "chapters",
+        "n": 2
+      },
+      "short": "귤"
+    },
+    {
+      "id": "purple",
+      "name": "라벤더",
+      "color": "#B197FC",
+      "unlock": {
+        "type": "streak",
+        "n": 5
+      },
+      "short": "라벤더"
+    },
+    {
+      "id": "red",
+      "name": "딸기 빨강",
+      "color": "#FF6B6B",
+      "unlock": {
+        "type": "stamps",
+        "n": 5
+      },
+      "short": "딸기"
+    },
+    {
+      "id": "navy",
+      "name": "밤하늘",
+      "color": "#5C7CFA",
+      "unlock": {
+        "type": "level",
+        "n": 6
+      },
+      "short": "밤하늘"
+    },
+    {
+      "id": "black",
+      "name": "먹물 검정",
+      "color": "#495057",
+      "unlock": {
+        "type": "chapters",
+        "n": 4
+      },
+      "short": "먹물"
+    }
   ]
 }

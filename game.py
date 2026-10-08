@@ -72,6 +72,13 @@ UNLOCK_TEXT = {"level": "레벨 {n}", "stamps": "스탬프 {n}개", "chapters": 
                "streak": "{n}일 연속 공부", "terms": "외운 용어 {n}개"}
 
 
+SHORT_TEXT = {"level": "Lv.{n}", "stamps": "스탬프 {n}", "chapters": "스토리 {n}", "streak": "{n}일 연속", "terms": "용어 {n}"}
+
+
+def unlock_short(u):
+    return SHORT_TEXT[u["type"]].format(n=u["n"])
+
+
 def unlock_text(u):
     return UNLOCK_TEXT[u["type"]].format(n=u["n"])
 
@@ -123,8 +130,8 @@ def compute_status(companies):
     have = {"level": level, "stamps": stamp_done, "chapters": len(progress["chapters"]),
             "streak": _streak(_activity_counts()), "terms": len(storage.read_all("known_terms"))}
     ok = lambda u: have[u["type"]] >= u["n"]
-    items = [dict(it, unlocked=ok(it["unlock"]), need=unlock_text(it["unlock"])) for it in hats["items"]]
-    colors = [dict(c, unlocked=ok(c["unlock"]), need=unlock_text(c["unlock"])) for c in hats["colors"]]
+    items = [dict(it, unlocked=ok(it["unlock"]), need=unlock_text(it["unlock"]), need_short=unlock_short(it["unlock"])) for it in hats["items"]]
+    colors = [dict(c, unlocked=ok(c["unlock"]), need=unlock_text(c["unlock"]), need_short=unlock_short(c["unlock"])) for c in hats["colors"]]
 
     # 옷장 설정: 직접 고른 자리는 그대로, 안 고른 자리는 해금된 것 중 가장 좋은 것(rank)을 자동으로 입어요
     custom = progress.get("custom", {})
@@ -249,4 +256,4 @@ def resolve_worn(status, chosen):
         else:
             pick = next((it for it in cands if it["id"] == val), None)
         worn[sid] = pick["id"] if pick else None
-    return [i for i in worn.values() if i]
+    return worn

@@ -1,11 +1,10 @@
 {% extends "base.html" %}
-{% from "_macros.html" import char, scene %}
+{% from "_macros.html" import char, mini %}
 {% block title %}내 옷장 · 무역공부노트{% endblock %}
 
 {% block content %}
 <div class="page-head">
   <h1>{{ ico('hat') }} 내 옷장</h1>
-  <p>모험하며 얻은 장식으로 {{ cast.player.name }}를 꾸며 보세요. 고르는 즉시 미리보기가 바뀌어요.</p>
 </div>
 
 <div class="closet-layout">
@@ -13,48 +12,43 @@
     <div id="closetPreview">
       <svg class="me-big" viewBox="10 -26 80 170" aria-hidden="true">{{ char(0, cast.player.hat, false, 'hero-char', '', me.equipped, 0) }}</svg>
     </div>
-    <h2 id="previewName">{{ cast.player.name }}</h2>
-    <p class="note" style="margin:0">Lv.{{ me.level }} · {{ me.xp }}xp</p>
+    <input type="text" id="closetName" class="name-input" maxlength="8" value="{{ cast.player.name }}" aria-label="이름">
+    <p class="note" style="margin:0">Lv.{{ me.level }}</p>
     <div class="closet-actions">
-      <button class="btn big" id="closetSave" type="button">저장하기</button>
-      <button class="btn white small" id="closetAuto" type="button" title="자리마다 가장 좋은 걸 자동으로 입어요">자동으로 입기</button>
-      <button class="btn white small" id="closetReset" type="button" title="이름, 색, 장식을 모두 처음으로">처음 모습으로</button>
+      <button class="btn big" id="closetSave" type="button">저장</button>
+      <div class="row" style="gap:8px">
+        <button class="btn white small" id="closetAuto" type="button" title="자리마다 가장 좋은 걸 자동으로 입어요">자동</button>
+        <button class="btn white small" id="closetReset" type="button" title="이름, 색, 장식을 모두 처음으로">처음으로</button>
+      </div>
     </div>
   </div>
 
-  <div class="closet-panels">
-    <div class="card">
-      <h2>이름</h2>
-      <input type="text" id="closetName" maxlength="8" value="{{ cast.player.name }}" placeholder="이름 (최대 8글자)">
-    </div>
-
-    <div class="card">
-      <h2>모자 색</h2>
-      <div class="swatches" id="swatches">
+  <div class="card closet-panel">
+    <div class="closet-row">
+      <span class="row-label">모자 색</span>
+      <div class="tiles" id="swatches">
         {% for c in me.colors %}
-          <button type="button" class="swatch {{ 'on' if c.id == me.player.color_id }} {{ 'locked' if not c.unlocked }}" data-color="{{ c.id }}" {{ 'disabled' if not c.unlocked }}
-                  style="--c: {{ c.color }}" title="{{ c.name if c.unlocked else c.name ~ ' · ' ~ c.need ~ '에 열려요' }}">
+          <button type="button" class="tile swatch {{ 'on' if c.id == me.player.color_id }} {{ 'locked' if not c.unlocked }}" data-color="{{ c.id }}" {{ 'disabled' if not c.unlocked }}
+                  style="--c: {{ c.color }}" title="{{ c.name if c.unlocked else c.name ~ ' · ' ~ c.need }}">
+            <i class="dot"></i>
+            <span>{{ c.need_short if not c.unlocked else c.short }}</span>
             {% if not c.unlocked %}{{ ico('lock') }}{% endif %}
-            <span>{{ c.name }}</span>
-            {% if not c.unlocked %}<em>{{ c.need }}</em>{% endif %}
           </button>
         {% endfor %}
       </div>
     </div>
 
     {% for sl in me.slots %}
-      {% set mode = me.custom.get('slots', {}).get(sl.id, 'auto') if sl.id in me.custom.get('slots', {}) else 'auto' %}
-      <div class="card slot-card" data-slot="{{ sl.id }}">
-        <h2>{{ sl.name }}</h2>
-        <div class="opts">
-          <button type="button" class="opt {{ 'on' if mode == 'auto' }}" data-val="auto"><b>자동</b><span>가장 좋은 걸 입어요</span></button>
-          <button type="button" class="opt {{ 'on' if mode is none or mode == 'none' }}" data-val="none"><b>안 입기</b><span>비워 둘래요</span></button>
+      <div class="closet-row slot-card" data-slot="{{ sl.id }}">
+        <span class="row-label">{{ sl.name }}</span>
+        <div class="tiles">
+          <button type="button" class="tile none {{ 'on' if not me.worn[sl.id] }}" data-val="none" title="안 입기"><i class="x"></i><span>없음</span></button>
           {% for it in me.hat_items if it.slot == sl.id %}
-            <button type="button" class="opt {{ 'on' if mode == it.id }} {{ 'locked' if not it.unlocked }}" data-val="{{ it.id }}" {{ 'disabled' if not it.unlocked }}
-                    title="{{ it.desc if it.unlocked else it.need ~ '에 열려요' }}">
+            <button type="button" class="tile opt {{ 'on' if me.worn[sl.id] == it.id }} {{ 'locked' if not it.unlocked }}" data-val="{{ it.id }}" {{ 'disabled' if not it.unlocked }}
+                    title="{{ (it.name ~ ' · ' ~ it.desc) if it.unlocked else (it.name ~ ' · ' ~ it.need) }}">
+              {{ mini(me.player.hat, it.id) }}
+              <span>{{ it.short if it.unlocked else it.need_short }}</span>
               {% if not it.unlocked %}{{ ico('lock') }}{% endif %}
-              <b>{{ it.name if it.unlocked else '???' }}</b>
-              <span>{{ it.desc if it.unlocked else it.need }}</span>
             </button>
           {% endfor %}
         </div>

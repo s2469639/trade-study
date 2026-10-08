@@ -629,3 +629,27 @@ input[type=number]:focus { background: #FFFDF0; box-shadow: 0 0 0 4px #BFE0FB; }
 .opt .ico { position: absolute; top: 8px; right: 8px; width: 18px; height: 18px; }
 .next-list { list-style: none; padding: 0; margin: 6px 0 0; }
 @media (max-width: 960px) { .closet-layout { grid-template-columns: 1fr; } .closet-preview { position: static; } .closet-preview .me-big { height: 300px; width: 140px; } }
+
+/* ---- 옷장 (간결 버전): 글자를 줄이고 그림 칸으로 ---- */
+.closet-layout { grid-template-columns: minmax(240px, 290px) minmax(0, 1fr); }
+.closet-preview .me-big { width: 150px; height: 320px; }
+.name-input { text-align: center; font-family: var(--font-title); font-size: 1.5rem; max-width: 220px; margin: 6px auto 2px; display: block; border-style: dashed; background: transparent; }
+.closet-panel { margin: 0; padding: 22px 26px; }
+.closet-row { display: flex; align-items: center; gap: 18px; padding: 12px 0; border-bottom: 2px dashed #e4e4e0; }
+.closet-row:last-child { border-bottom: 0; }
+.row-label { width: 64px; flex: none; color: var(--gray); font-size: 1rem; }
+.tiles { display: flex; flex-wrap: wrap; gap: 10px; }
+.tile { position: relative; width: 78px; height: 96px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 2px; padding: 4px 2px 6px;
+  cursor: pointer; font: inherit; color: var(--ink); background: #fff; border: 2.5px solid var(--ink); border-radius: var(--br-sm); transition: transform .3s var(--spring), background .2s; }
+.tile span { font-size: .85rem; line-height: 1.2; text-align: center; }
+.tile:hover:not(:disabled) { transform: translateY(-3px) rotate(-1deg); }
+.tile.on { background: var(--yellow); box-shadow: 0 0 0 3px var(--ink); }
+.tile.locked { border-style: dashed; border-color: #bbb; color: var(--gray); background: transparent; cursor: not-allowed; }
+.tile.locked .mini-char, .tile.locked .dot { opacity: .35; filter: grayscale(1); }
+.tile .ico { position: absolute; top: 5px; right: 5px; width: 17px; height: 17px; }
+.mini-char { width: 54px; height: 62px; overflow: hidden; margin-bottom: 2px; }
+.tile.swatch { height: 76px; }
+.tile .dot { width: 38px; height: 28px; margin-bottom: 8px; background: var(--c); border: 2.5px solid var(--ink); clip-path: polygon(14% 0, 86% 0, 100% 100%, 0 100%); }
+.tile.none .x { position: relative; width: 30px; height: 30px; margin-bottom: 18px; border: 2.5px dashed #aaa; border-radius: 50%; }
+.tile.none .x::after { content: ""; position: absolute; left: 3px; right: 3px; top: 50%; border-top: 2.5px solid #aaa; transform: rotate(-35deg); }
+@media (max-width: 960px) { .closet-row { flex-direction: column; align-items: flex-start; gap: 6px; } .row-label { width: auto; } }
