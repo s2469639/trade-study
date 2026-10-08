@@ -13,15 +13,16 @@
     body.querySelector(".quiz-q").textContent = item.q;
     const wrap = body.querySelector(".choices"), fb = body.querySelector(".feedback"), nxt = body.querySelector("#qNext");
     let locked = false;
-    item.options.forEach((text, idx) => {
+    const order = item.options.map((t, i) => [t, i]).sort(() => Math.random() - 0.5);     // 보기 순서를 섞어서 정답 위치를 외우지 않게
+    order.forEach(([text, idx]) => {
       const b = document.createElement("button");
-      b.type = "button"; b.className = "choice"; b.textContent = text;
+      b.type = "button"; b.className = "choice"; b.textContent = text; b.dataset.idx = idx;
       b.addEventListener("click", () => {
         if (locked) return; locked = true;
         const ok = idx === item.answer;
         if (ok) right++;
         b.classList.add(ok ? "right" : "wrong");
-        if (!ok) wrap.children[item.answer].classList.add("right");
+        if (!ok) [...wrap.children].find((c) => +c.dataset.idx === item.answer).classList.add("right");
         wrap.querySelectorAll(".choice").forEach((x) => (x.disabled = true));
         fb.hidden = false; fb.className = "feedback " + (ok ? "ok" : "bad");
         fb.textContent = (ok ? "정답! " : "아쉬워요. ") + item.explain;

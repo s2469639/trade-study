@@ -653,3 +653,84 @@ input[type=number]:focus { background: #FFFDF0; box-shadow: 0 0 0 4px #BFE0FB; }
 .tile.none .x { position: relative; width: 30px; height: 30px; margin-bottom: 18px; border: 2.5px dashed #aaa; border-radius: 50%; }
 .tile.none .x::after { content: ""; position: absolute; left: 3px; right: 3px; top: 50%; border-top: 2.5px solid #aaa; transform: rotate(-35deg); }
 @media (max-width: 960px) { .closet-row { flex-direction: column; align-items: flex-start; gap: 6px; } .row-label { width: auto; } }
+
+/* ============ 월드맵 확장판 (섬 9개, 군도, 안개, 장식) ============ */
+.map-wrap { position: relative; }
+.map-card.big-map { padding: 4px; --fill: #E9F5FE; }
+.map { display: block; width: 100%; height: auto; overflow: visible; }
+.map .ship { transition: none !important; }
+.map .isle-name { font-size: 24px; }
+.map .town-name { font-size: 22px; }
+.map .star { stroke-width: 2.6; }
+.map .region { fill: #8b8b8b; font-size: 24px; text-anchor: middle; letter-spacing: .06em; }
+
+.map-hud { position: absolute; top: 16px; right: 18px; z-index: 3; display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.hud-pill { display: inline-flex; align-items: center; gap: 4px; background: #fff; border: 2.5px solid var(--ink); border-radius: 999px; padding: 0 14px; font-size: 1rem; line-height: 1.7; }
+.hud-pill .ico { width: 1.1em; height: 1.1em; }
+.map-tip { position: absolute; z-index: 6; transform: translate(-50%, -100%); max-width: 260px; text-align: center; pointer-events: none;
+  background: #fff; border: 2.5px solid var(--ink); border-radius: 14px 16px 12px 18px; padding: 6px 14px 7px; line-height: 1.4; animation: pop .25s var(--spring); }
+.map-tip[hidden] { display: none; }
+.map-tip b { display: block; font-family: var(--font-title); font-weight: 400; font-size: 1.15rem; }
+.map-tip span { display: block; font-size: .92rem; color: #555; }
+.map-tip em { display: block; font-style: normal; font-size: .85rem; color: var(--gray); margin-top: 2px; }
+
+/* 바다 장식 */
+.map .sun circle { fill: #FFE066; stroke: var(--ink); stroke-width: 3.2; }
+.map .sun .rays path { stroke: var(--ink); stroke-width: 3.2; stroke-linecap: round; fill: none; }
+.map .sun .rays { transform-box: fill-box; transform-origin: center; animation: spin 40s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.map .cloud path { fill: #fff; stroke: var(--ink); stroke-width: 3; stroke-linejoin: round; animation: cloudDrift 22s ease-in-out infinite alternate; }
+.map .cloud.c2 path { animation-duration: 28s; animation-delay: -9s; } .map .cloud.c3 path { animation-duration: 19s; animation-delay: -4s; }
+@keyframes cloudDrift { from { transform: translateX(-26px); } to { transform: translateX(34px); } }
+.map .route { fill: none; stroke: #8EC5F2; stroke-width: 3.2; stroke-dasharray: 3 12; stroke-linecap: round; opacity: .9; }
+.map .bird { fill: none; stroke: var(--ink); stroke-width: 3; stroke-linecap: round; animation: flap 3.4s ease-in-out infinite; }
+@keyframes flap { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(14px, -10px); } }
+.map .whale .body { fill: #A5D8FB; stroke: var(--ink); stroke-width: 3.4; stroke-linejoin: round; }
+.map .whale .eye, .map .fish .eye { fill: var(--ink); }
+.map .whale .spout path { fill: none; stroke: #6CB6F0; stroke-width: 3.2; stroke-linecap: round; transform-box: fill-box; transform-origin: 50% 100%; animation: spout 3.2s ease-in-out infinite; }
+@keyframes spout { 0%, 55%, 100% { opacity: 0; transform: scaleY(.2); } 70% { opacity: 1; transform: scaleY(1); } 90% { opacity: 0; transform: scaleY(1.1); } }
+.map .whale { animation: none; }
+.map .fish ellipse, .map .fish path { fill: #FFA94D; stroke: var(--ink); stroke-width: 2.6; stroke-linejoin: round; }
+.map .fish { animation: swim 6s ease-in-out infinite; }
+@keyframes swim { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-30px, 8px); } }
+.map .twinkle { fill: #FFD43B; stroke: var(--ink); stroke-width: 1.6; transform-box: fill-box; transform-origin: center; animation: twinkle 2.6s ease-in-out infinite; }
+@keyframes twinkle { 0%, 100% { transform: scale(.5) rotate(0); opacity: .4; } 50% { transform: scale(1.1) rotate(25deg); opacity: 1; } }
+
+/* 섬: 안 가본 섬은 안개, 다 모으면 깃발 */
+.map .island { transition: opacity .3s; }
+.map .island.fog { opacity: .78; }
+.map .island.fog:hover, .map .island.fog:focus-visible { opacity: 1; }
+.map .island.fog .isle-shape path { fill: #F1F3F2 !important; stroke: #9a9a9a; stroke-dasharray: 12 9; }
+.map .island.fog .map-ico { opacity: .32; filter: grayscale(1); }
+.map .island.fog .isle-name { fill: #9a9a9a; }
+.map .island.fog .star { opacity: .3; }
+.map .fog-badge circle { fill: #fff; stroke: var(--ink); stroke-width: 3; }
+.map .fog-badge text { font-size: 22px; text-anchor: middle; fill: var(--ink); }
+.map .island.done .isle-shape path { stroke: #E5A800; stroke-width: 5; }
+.map .crown-flag .ico { stroke-width: 2.4; }
+.map .crown-flag { animation: none; }
+.map .crown-flag > .ico:first-child { transform-box: fill-box; transform-origin: 20% 100%; animation: flagWave 2.2s ease-in-out infinite; }
+.map .crown-flag .spark { animation: twinkle 1.8s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.map .wake { fill: #fff; stroke: #8EC5F2; stroke-width: 2.4; transform-box: fill-box; transform-origin: center; animation: wake .9s ease-out forwards; }
+@keyframes wake { from { transform: scale(.5); opacity: .95; } to { transform: scale(2.4); opacity: 0; } }
+
+.isle-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 20px 0 6px; }
+.isle-chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 14px 3px 10px; text-decoration: none; color: var(--ink); background: #fff; border: 2.5px solid var(--ink);
+  border-radius: 999px; font-size: 1rem; transition: transform .3s var(--spring), background .2s; }
+.isle-chip b { font-weight: 400; color: var(--gray); font-size: .88rem; }
+.isle-chip:hover { transform: translateY(-3px) rotate(-1deg); background: var(--yellow-soft); }
+.isle-chip.fog { border-style: dashed; color: #888; }
+.isle-chip .ico { width: 1.2em; height: 1.2em; }
+.home-hero.compact { margin-bottom: 22px; }
+.home-hero.compact h1 { font-size: clamp(1.8rem, 3vw, 2.3rem); }
+@media (max-width: 960px) { .map-wrap { overflow-x: auto; } .map { min-width: 820px; } .map-hud { position: sticky; left: 0; right: auto; justify-content: flex-start; padding: 10px 12px 0; } }
+
+/* 월드맵 다듬기: 현황판은 지도 위 한 줄, 섬 글씨 크기 */
+.map-hud { position: static; justify-content: center; padding: 8px 6px 4px; }
+.map .isle-name { font-size: 22px; }
+.sticky-note.tip { max-width: 520px; font-size: 1rem; padding: 4px 14px; }
+.home-hero.compact p.lead { margin-bottom: 8px; }
+.isle-chip { padding: 2px 11px 2px 8px; font-size: .95rem; }
+.sticky-note.tip { max-width: 720px; }
+.isle-chips { gap: 8px; }
+.isle-chip { font-size: .9rem; padding: 1px 9px 1px 7px; }

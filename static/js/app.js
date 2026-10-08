@@ -281,26 +281,74 @@ document.querySelectorAll("[data-count]").forEach((el) => {
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => dispatchEvent(new Event("resize")));
 addEventListener("load", () => dispatchEvent(new Event("resize")));
 
-// ---------- 월드맵: 누르면 삐약이의 배가 그 장소로 가서 페이지를 열어요 ----------
+// ---------- 월드맵: 누르면 삐약이의 배가 곡선 항로로 달려가서 페이지를 열어요 ----------
 (function () {
   const map = document.getElementById("worldMap");
   if (!map) return;
-  const ship = document.getElementById("ship");
+  const ship = document.getElementById("ship"), face = document.getElementById("shipFace"), wakes = document.getElementById("wakes");
+  const tip = document.getElementById("mapTip");
   const spots = [...map.querySelectorAll(".spot")];
   const find = (key) => spots.find((s) => s.dataset.key === key);
-  const move = (spot) => { ship.style.transform = `translate(${spot.dataset.x}px, ${spot.dataset.y}px)`; };
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let pos = { x: 110, y: 552 }, busy = false;
 
+  const place = (x, y) => { pos = { x, y }; ship.style.transform = `translate(${x}px, ${y}px)`; };
   let last = null;
   try { last = localStorage.getItem("shipAt"); } catch (e) {}
   const start = find(last) || find("story");
-  if (start) { ship.classList.add("no-anim"); move(start); void ship.getBoundingClientRect(); ship.classList.remove("no-anim"); }
+  if (start) place(+start.dataset.x, +start.dataset.y);
 
-  spots.forEach((s) => s.addEventListener("click", (e) => {
-    e.preventDefault();
+  // 이름표(툴팁): 마우스를 올리면 한 줄 소개와 스탬프를 보여줘요
+  const wrap = map.closest(".map-wrap");
+  function showTip(s, e) {
+    if (!s.dataset.name) return;
+    tip.innerHTML = `<b>${s.dataset.name}</b>` + (s.dataset.tag ? `<span>${s.dataset.tag}</span>` : "") +
+      (s.dataset.got !== undefined ? `<em>스탬프 ${s.dataset.got}/5${s.classList.contains("fog") ? " · 아직 안 가본 섬" : ""}</em>` : "");
+    tip.hidden = false; moveTip(e);
+  }
+  function moveTip(e) {
+    const r = wrap.getBoundingClientRect();
+    tip.style.left = Math.min(Math.max(e.clientX - r.left, 130), r.width - 130) + "px";
+    tip.style.top = (e.clientY - r.top - 18) + "px";
+  }
+  spots.forEach((s) => {
+    s.addEventListener("mouseenter", (e) => showTip(s, e));
+    s.addEventListener("mousemove", moveTip);
+    s.addEventListener("mouseleave", () => (tip.hidden = true));
+  });
+
+  function wake(x, y) {
+    const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    c.setAttribute("cx", x); c.setAttribute("cy", y + 12); c.setAttribute("r", 5); c.setAttribute("class", "wake");
+    wakes.appendChild(c); setTimeout(() => c.remove(), 900);
+  }
+  // 출발점 → 도착점을 위로 볼록한 곡선으로 이동
+  function sail(to) {
+    return new Promise((resolve) => {
+      const from = pos, dx = to.x - from.x, dist = Math.hypot(dx, to.y - from.y);
+      if (dist < 4 || reduce) { place(to.x, to.y); return resolve(); }
+      const cx = (from.x + to.x) / 2, cy = Math.min(from.y, to.y) - Math.min(90, dist / 4);
+      face.setAttribute("transform", dx < 0 ? "translate(0,0) scale(-1,1)" : "");        // 가는 방향을 바라보게
+      const dur = Math.min(1500, Math.max(750, dist * 1.25)); let t0 = null, lastWake = 0;
+      ship.classList.add("sailing");
+      (function frame(now) {
+        if (t0 === null) t0 = now;
+        let k = Math.min((now - t0) / dur, 1);
+        const e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;                   // 천천히 출발, 천천히 도착
+        const x = (1 - e) * (1 - e) * from.x + 2 * (1 - e) * e * cx + e * e * to.x;
+        const y = (1 - e) * (1 - e) * from.y + 2 * (1 - e) * e * cy + e * e * to.y;
+        place(x, y);
+        if (now - lastWake > 70) { wake(x, y); lastWake = now; }
+        if (k < 1) requestAnimationFrame(frame); else { ship.classList.remove("sailing"); resolve(); }
+      })(performance.now());
+    });
+  }
+
+  spots.forEach((s) => s.addEventListener("click", async (e) => {
+    e.preventDefault(); if (busy) return; busy = true; tip.hidden = true;
     try { localStorage.setItem("shipAt", s.dataset.key); } catch (err) {}
-    ship.classList.add("sailing");
-    move(s);
-    setTimeout(() => (location.href = s.getAttribute("href")), 950);
+    await sail({ x: +s.dataset.x, y: +s.dataset.y });
+    setTimeout(() => (location.href = s.getAttribute("href")), 120);
   }));
 })();
 

@@ -149,6 +149,7 @@ def home():
         stats=stats,
         quests=game.daily_quests(),
         islands=storage.load_sample("industries"),
+        regions=storage.load_sample("map")["regions"],
         cal=game.activity_calendar(),
         tip=(lambda tips: tips[date.today().toordinal() % len(tips)])(storage.load_sample("tips")),
     )
