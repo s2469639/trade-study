@@ -68,8 +68,37 @@ def daily_quests():
             for t, h, need, go in quests]
 
 
+UNLOCK_TEXT = {"level": "레벨 {n}", "stamps": "스탬프 {n}개", "chapters": "스토리 {n}챕터 클리어",
+               "streak": "{n}일 연속 공부", "terms": "외운 용어 {n}개"}
+
+
+def unlock_text(u):
+    return UNLOCK_TEXT[u["type"]].format(n=u["n"])
+
+
+def _activity_counts():
+    counts = {}
+    for col in ACTIVITY_COLLECTIONS:
+        for it in storage.read_all(col):
+            d = it.get("date")
+            if d:
+                counts[d] = counts.get(d, 0) + 1
+    return counts
+
+
+def _streak(counts):
+    def run(day):
+        n = 0
+        while counts.get(day.strftime("%Y-%m-%d"), 0) > 0:
+            n += 1
+            day -= timedelta(days=1)
+        return n
+    today = date.today()
+    return run(today) or run(today - timedelta(days=1))
+
+
 def compute_status(companies):
-    """XP, 레벨, 착용 중인 모자 장식, 섬별 스탬프를 한 번에 계산."""
+    """XP, 레벨, 해금된 장식/색, 지금 입고 있는 모습, 섬별 스탬프를 한 번에 계산."""
     hats = storage.load_sample("hats")
     progress = get_progress()
     industries = [i["id"] for i in storage.load_sample("industries")]
@@ -89,52 +118,107 @@ def compute_status(companies):
     level = max(i + 1 for i, need in enumerate(levels) if xp >= need)
     cur_need = levels[level - 1]
     next_need = levels[level] if level < len(levels) else None
-    unlocked = [it for it in hats["items"] if it["level"] <= level]
-    best = {}
-    for it in unlocked:                         # 같은 자리(slot)에서는 가장 높은 레벨 장식만 착용
-        if it["slot"] not in best or it["level"] > best[it["slot"]]["level"]:
-            best[it["slot"]] = it
-    next_item = next((it for it in hats["items"] if it["level"] == level + 1), None)
 
+    # 해금 조건에 쓰는 숫자들
+    have = {"level": level, "stamps": stamp_done, "chapters": len(progress["chapters"]),
+            "streak": _streak(_activity_counts()), "terms": len(storage.read_all("known_terms"))}
+    ok = lambda u: have[u["type"]] >= u["n"]
+    items = [dict(it, unlocked=ok(it["unlock"]), need=unlock_text(it["unlock"])) for it in hats["items"]]
+    colors = [dict(c, unlocked=ok(c["unlock"]), need=unlock_text(c["unlock"])) for c in hats["colors"]]
+
+    # 옷장 설정: 직접 고른 자리는 그대로, 안 고른 자리는 해금된 것 중 가장 좋은 것(rank)을 자동으로 입어요
+    custom = progress.get("custom", {})
+    chosen = custom.get("slots", {})
+    worn = {}
+    for sl in hats["slots"]:
+        sid = sl["id"]
+        cands = [it for it in items if it["slot"] == sid and it["unlocked"]]
+        if sid in chosen:
+            pick = next((it for it in cands if it["id"] == chosen[sid]), None)       # 고른 게 없거나 None 이면 안 입기
+        else:
+            pick = max(cands, key=lambda it: it["rank"], default=None)
+        worn[sid] = pick["id"] if pick else None
+    color = next((c for c in colors if c["id"] == custom.get("color") and c["unlocked"]), None)
+    color = color or next(c for c in colors if c["id"] == "yellow")
+    name = (custom.get("name") or hats["player"]["name"]).strip() or hats["player"]["name"]
+
+    next_item = next((it for it in items if it["unlock"]["type"] == "level" and it["unlock"]["n"] == level + 1), None)
     return {
         "xp": xp, "level": level, "cur_need": cur_need, "next_need": next_need,
         "pct": 100 if next_need is None else int((xp - cur_need) / (next_need - cur_need) * 100),
-        "equipped": [it["id"] for it in best.values()],
-        "unlocked_ids": [it["id"] for it in unlocked],
-        "hat_items": hats["items"], "next_item": next_item,
+        "equipped": [i for i in worn.values() if i], "worn": worn, "slots": hats["slots"],
+        "unlocked_ids": [it["id"] for it in items if it["unlocked"]],
+        "hat_items": items, "colors": colors, "next_item": next_item,
+        "player": {"name": name, "hat": color["color"], "color_id": color["id"]},
+        "custom": custom, "have": have,
         "stamps": stamps, "stamp_done": stamp_done, "stamp_total": 5 * len(industries),
         "chapters_done": len(progress["chapters"]),
         "progress": progress,
     }
 
 
+def save_closet(payload, status):
+    """옷장에서 보낸 설정을 검사해서 저장 (해금 안 된 장식/색은 거절)."""
+    progress = get_progress()
+    if payload.get("reset"):
+        progress.pop("custom", None)
+        storage.save_progress(progress)
+        return
+    custom = dict(progress.get("custom", {}))
+    if "name" in payload:
+        name = str(payload["name"]).strip()[:8]
+        if name:
+            custom["name"] = name
+        else:
+            custom.pop("name", None)
+    if "color" in payload:
+        c = next((c for c in status["colors"] if c["id"] == payload["color"] and c["unlocked"]), None)
+        if c:
+            custom["color"] = c["id"]
+    if isinstance(payload.get("slots"), dict):
+        slots = dict(custom.get("slots", {}))
+        valid = {s["id"] for s in status["slots"]}
+        for sid, val in payload["slots"].items():
+            if sid not in valid:
+                continue
+            if val == "auto":
+                slots.pop(sid, None)
+            elif val in (None, "none"):
+                slots[sid] = None
+            elif any(it["id"] == val and it["slot"] == sid and it["unlocked"] for it in status["hat_items"]):
+                slots[sid] = val
+        custom["slots"] = slots
+    progress["custom"] = custom
+    storage.save_progress(progress)
+
+
 def celebrate(status):
-    """이번에 처음 달성한 것(새 스탬프, 레벨업 장식)을 찾아서 '봤다'고 표시."""
+    """이번에 처음 달성한 것(새 스탬프, 레벨업, 새 장식/색)을 찾아서 '봤다'고 표시."""
     progress = status["progress"]
     done_keys = [f"{iid}:{s['key']}" for iid, ss in status["stamps"].items() for s in ss if s["done"]]
     new_stamps = [k for k in done_keys if k not in progress["seen_stamps"]]
     new_level = status["level"] if status["level"] > progress["seen_level"] else None
-    new_items = [it for it in status["hat_items"]
-                 if new_level and progress["seen_level"] < it["level"] <= status["level"]]
-    if new_stamps or new_level or set(done_keys) != set(progress["seen_stamps"]):
+
+    unlocked = [it for it in status["hat_items"] if it["unlocked"]] + [c for c in status["colors"] if c["unlocked"]]
+    if "seen_items" not in progress:        # 예전 데이터: 레벨로 얻은 장식은 이미 본 걸로 쳐요
+        progress["seen_items"] = [x["id"] for x in unlocked if x["unlock"]["type"] == "level"]
+    new_things = [x for x in unlocked if x["id"] not in progress["seen_items"]]
+
+    if new_stamps or new_level or new_things or set(done_keys) != set(progress["seen_stamps"]):
         progress["seen_stamps"] = done_keys
         progress["seen_level"] = max(progress["seen_level"], status["level"])
+        progress["seen_items"] = sorted(set(progress["seen_items"]) | {x["id"] for x in unlocked})
         storage.save_progress(progress)
-    return {"stamps": new_stamps, "level": new_level, "items": new_items}
-
+    return {"stamps": new_stamps, "level": new_level,
+            "items": [{"name": x["name"], "desc": x.get("desc", "새로운 모자 색이에요"), "kind": "색" if "color" in x else "장식"}
+                      for x in new_things]}
 
 ACTIVITY_COLLECTIONS = ("logs", "notes", "news", "writings", "phrases", "answers", "explains", "jobs", "known_terms")
 
 
 def activity_calendar(weeks=14):
     """공부 잔디: 최근 몇 주 동안 하루에 몇 개를 기록했는지 (칸 색깔 0~4단계)와 연속 일수."""
-    counts = {}
-    for col in ACTIVITY_COLLECTIONS:
-        for it in storage.read_all(col):
-            d = it.get("date")
-            if d:
-                counts[d] = counts.get(d, 0) + 1
-
+    counts = _activity_counts()
     today = date.today()
     start = today - timedelta(days=today.weekday() + 7 * (weeks - 1))      # 월요일부터 시작하는 주
     level = lambda n: 0 if n == 0 else 1 if n <= 2 else 2 if n <= 5 else 3 if n <= 9 else 4
@@ -148,12 +232,21 @@ def activity_calendar(weeks=14):
             col.append({"date": key, "n": n, "level": level(n), "future": day > today})
         grid.append(col)
 
-    def streak_from(day):
-        n = 0
-        while counts.get(day.strftime("%Y-%m-%d"), 0) > 0:
-            n += 1
-            day -= timedelta(days=1)
-        return n
+    streak = _streak(counts)
 
-    streak = streak_from(today) or streak_from(today - timedelta(days=1))   # 오늘 아직 안 했어도 어제까지 이어졌으면 유지
     return {"weeks": grid, "streak": streak, "days": len(counts), "weekdays": ["월", "화", "수", "목", "금", "토", "일"]}
+
+
+def resolve_worn(status, chosen):
+    """옷장 미리보기: chosen 은 {자리: '자동' | 'none' | 장식id}. 저장 없이 입은 모습만 계산해요."""
+    worn = {}
+    for sl in status["slots"]:
+        sid = sl["id"]
+        cands = [it for it in status["hat_items"] if it["slot"] == sid and it["unlocked"]]
+        val = chosen.get(sid, "auto")
+        if val == "auto":
+            pick = max(cands, key=lambda it: it["rank"], default=None)
+        else:
+            pick = next((it for it in cands if it["id"] == val), None)
+        worn[sid] = pick["id"] if pick else None
+    return [i for i in worn.values() if i]

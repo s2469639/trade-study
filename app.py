@@ -21,6 +21,7 @@ app = Flask(__name__)
 # 사이드바 메뉴: (함수이름, 아이콘 이름, 이름)  — 아이콘은 templates/_icons.html 에 있어요
 NAV = [
     ("home", "map", "월드맵"),
+    ("closet", "hat", "내 옷장"),
     ("industry", "factory", "산업 섬"),
     ("company", "building", "기업 항구"),
     ("story", "ship", "무역 항구 이야기"),
@@ -43,7 +44,14 @@ def player_items():
     return status["equipped"] if status else []
 
 
+def player_hat():
+    """지금 삐약이의 모자 색 (옷장에서 바꾼 색)."""
+    status = getattr(g, "status", None)
+    return status["player"]["hat"] if status else "#FFD43B"
+
+
 app.jinja_env.globals["ico"] = ico
+app.jinja_env.globals["player_hat"] = player_hat
 app.jinja_env.globals["player_items"] = player_items
 
 
@@ -52,12 +60,14 @@ def inject_globals():
     status = game.compute_status(all_companies())
     g.status = status
     hats = storage.load_sample("hats")
+    cast = {"player": dict(hats["player"], name=status["player"]["name"], hat=status["player"]["hat"]),
+            "mentor": hats["mentor"]}                       # 이름과 모자 색은 옷장에서 바꾼 값을 써요
     return {
         "NAV": NAV,
         "today": date.today().strftime("%Y-%m-%d"),
         "industries_all": storage.load_sample("industries"),
         "me": status,
-        "cast": hats,
+        "cast": cast,
         "celebrate": game.celebrate(status),
     }
 
@@ -330,6 +340,35 @@ def api_term_toggle(term_id):
         return jsonify(known=False)
     storage.add("known_terms", {"term_id": term_id})
     return jsonify(known=True)
+
+
+# ---------------------------------------------------------------- 내 옷장
+def _status():
+    return game.compute_status(all_companies())
+
+
+@app.route("/closet")
+def closet():
+    return render_template("closet.html")
+
+
+@app.get("/closet/preview")
+def closet_preview():
+    """고르는 즉시 바뀌는 미리보기 (저장하지 않아요)."""
+    status = _status()
+    try:
+        chosen = json.loads(request.args.get("slots", "{}"))
+    except json.JSONDecodeError:
+        chosen = {}
+    color = next((c for c in status["colors"] if c["id"] == request.args.get("color") and c["unlocked"]), None)
+    hat = color["color"] if color else status["player"]["hat"]
+    return render_template("_preview.html", hat=hat, items=game.resolve_worn(status, chosen if isinstance(chosen, dict) else {}))
+
+
+@app.post("/api/closet")
+def api_closet():
+    game.save_closet(request.get_json(silent=True) or {}, _status())
+    return jsonify(ok=True)
 
 
 # ---------------------------------------------------------------- 용어 퀴즈 결과 저장

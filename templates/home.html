@@ -41,17 +41,15 @@
         {% endif %}
       </div>
     </div>
-    <h3 style="margin-top:20px">모자 상자 {{ ico('hat') }}</h3>
-    <div class="closet-grid">
-      {% for it in me.hat_items %}
-        {% set have = it.id in me.unlocked_ids %}
-        <div class="closet-item {{ '' if have else 'locked' }}" title="{{ it.desc if have else '레벨 ' ~ it.level ~ '에 얻을 수 있어요' }}">
-          {{ ico('star' if have else 'lock') }}
-          <span>{{ it.name if have else '???' }}</span>
-          <em>Lv.{{ it.level }}</em>
-        </div>
-      {% endfor %}
-    </div>
+    <div class="row" style="margin-top:16px"><a class="btn" href="{{ url_for('closet') }}">{{ ico('hat') }} 내 옷장 열기</a>
+      <span class="note">장식 {{ me.unlocked_ids | length }}/{{ me.hat_items | length }}개 · 색 {{ me.colors | selectattr('unlocked') | list | length }}/{{ me.colors | length }}개 얻었어요</span></div>
+    {% set locked = me.hat_items | rejectattr('unlocked') | list %}
+    {% if locked %}
+      <h3 style="margin-top:18px">다음에 얻을 수 있는 것</h3>
+      <ul class="next-list">
+        {% for it in locked[:3] %}<li><span class="tag white">{{ it.need }}</span> {{ it.name }}</li>{% endfor %}
+      </ul>
+    {% endif %}
     <p class="note" style="margin:10px 0 0">공부 기록, 뉴스 정리, 면접 답변, 스탬프, 스토리 클리어로 경험치를 모아요.</p>
   </div>
 

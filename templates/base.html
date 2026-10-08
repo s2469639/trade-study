@@ -28,7 +28,7 @@
         <span class="nav-emoji">{{ ico(icon) }}</span>{{ label }}
       </a>
     {% endfor %}
-    <a class="me-card" href="{{ url_for('home') }}#closet" title="내 모자 상자 보기">
+    <a class="me-card" href="{{ url_for('closet') }}" title="내 옷장 열기">
       <svg class="me-mini" viewBox="8 -24 84 170" aria-hidden="true">{{ char(0, cast.player.hat, false, '', '', me.equipped, 0) }}</svg>
       <div class="me-info">
         <b>{{ cast.player.name }}</b>

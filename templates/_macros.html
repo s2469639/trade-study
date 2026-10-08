@@ -56,14 +56,16 @@
       {% if 'gold' in items %}<path class="skin" style="fill:#FFC13B" d="M35 22 L66 22 L67.5 29 L34 29 Z"/>
       {% elif 'ribbon' in items %}<path class="skin" style="fill:#FF8787" d="M36 23 L65 23 L66.5 29 L34.5 29 Z"/><path class="skin" style="fill:#FF8787" d="M51 26 L44 19 L44 33 Z M51 26 L58 19 L58 33 Z"/>{% endif %}
       {% if 'anchor' in items %}<g class="stroke" style="stroke-width:2.6"><circle cx="51" cy="14" r="2" fill="#fff"/><path d="M51 16 V26 M47 19 H55 M45 22 Q46 27 51 27 Q56 27 57 22"/></g>
-      {% elif 'star' in items %}<path class="skin" style="fill:#FF8787;stroke-width:2.6" d="M61 12 L62.8 16 L67 16.4 L63.8 19.2 L64.8 23.4 L61 21.2 L57.2 23.4 L58.2 19.2 L55 16.4 L59.2 16 Z"/>{% endif %}
+      {% elif 'star' in items %}<path class="skin" style="fill:#FF8787;stroke-width:2.6" d="M61 12 L62.8 16 L67 16.4 L63.8 19.2 L64.8 23.4 L61 21.2 L57.2 23.4 L58.2 19.2 L55 16.4 L59.2 16 Z"/>{% elif 'heart' in items %}<path class="skin" style="fill:#FF6B6B;stroke-width:2.6" d="M61 25 C54 20 55 13 59.5 13 C61 13 61.8 14.2 61.8 14.2 C61.8 14.2 62.6 13 64 13 C68 13 69 20 61 25 Z"/>{% endif %}
       {% if 'crown' in items %}<path class="skin" style="fill:#FFC13B" d="M38 8 L38 -6 L44 0 L51 -10 L58 0 L64 -6 L64 8 Z"/>
       {% elif 'flag' in items %}<path class="stroke" style="stroke-width:3" d="M51 6 V-16"/><path class="skin" style="fill:#4DABF7;stroke-width:3" d="M51 -16 L68 -11 L51 -5 Z"/>
       {% elif 'prop' in items %}<path class="stroke" style="stroke-width:3" d="M51 6 V-1"/><g class="prop"><path class="skin" style="fill:#FF8787;stroke-width:2.8" d="M51 -1 C 40 -9, 36 -1, 51 -1 Z M51 -1 C 62 7, 66 -1, 51 -1 Z"/></g>
-      {% elif 'flower' in items %}<path class="stroke" style="stroke-width:3" d="M51 6 V-2"/><g style="stroke-width:2.6" class="stroke"><circle cx="45" cy="-5" r="4" fill="#FFF"/><circle cx="57" cy="-5" r="4" fill="#fff"/><circle cx="51" cy="-12" r="4" fill="#fff"/><circle cx="51" cy="-3" r="4" fill="#fff"/><circle cx="51" cy="-6" r="3.4" fill="#FFD43B"/></g>{% endif %}
+      {% elif 'flower' in items %}<path class="stroke" style="stroke-width:3" d="M51 6 V-2"/><g style="stroke-width:2.6" class="stroke"><circle cx="45" cy="-5" r="4" fill="#FFF"/><circle cx="57" cy="-5" r="4" fill="#fff"/><circle cx="51" cy="-12" r="4" fill="#fff"/><circle cx="51" cy="-3" r="4" fill="#fff"/><circle cx="51" cy="-6" r="3.4" fill="#FFD43B"/></g>{% elif 'feather' in items %}<path class="skin" style="fill:#FF8787;stroke-width:2.8" d="M52 7 C58 -6 68 -10 76 -13 C73 -2 65 5 54 9 Z"/><path class="stroke" style="stroke-width:2.2" d="M53 8 C60 0 67 -6 73 -11"/>{% endif %}
+      {% if 'bowtie' in items %}<path class="skin" style="fill:#FF6B6B;stroke-width:2.6" d="M50 72 L39 66 L39 78 Z M50 72 L61 66 L61 78 Z"/><circle class="skin" style="fill:#FFD43B;stroke-width:2.4" cx="50" cy="72" r="3"/>{% elif 'scarf' in items %}<path class="skin" style="fill:#FF8787;stroke-width:2.6" d="M37 68 Q50 76 63 68 L64 75 Q50 83 36 75 Z"/><path class="skin" style="fill:#FF8787;stroke-width:2.6" d="M55 78 L60 94 L52 92 L51 80 Z"/>{% endif %}
       <path class="skin" d="M50 28 C61 27.5 70.5 36 70 48.5 C69.5 60 60 68.5 49.5 68 C38.5 67.5 29.5 58.5 30 47.5 C30.5 36.5 39 28.5 50 28 Z"/>
+      {% if 'blush' in items %}<ellipse cx="47" cy="58.5" rx="4.5" ry="2.8" fill="#FF8FA3" opacity=".8"/><ellipse cx="65" cy="58.5" rx="4.5" ry="2.8" fill="#FF8FA3" opacity=".8"/>{% endif %}
       <g class="eyes-wrap"><g class="eyes"><circle class="eye" cx="52" cy="50" r="3.2"/><circle class="eye" cx="63" cy="50" r="3.2"/></g></g>
-      {% if 'shades' in items %}<path class="skin" style="fill:#222;stroke-width:2.6" d="M45 45 H58 V53 Q58 56 55 56 H48 Q45 56 45 53 Z M60 45 H72 V53 Q72 56 69 56 H63 Q60 56 60 53 Z"/><path class="stroke" style="stroke-width:2.6" d="M58 48 H60"/>{% endif %}
+      {% if 'shades' in items %}<path class="skin" style="fill:#222;stroke-width:2.6" d="M45 45 H58 V53 Q58 56 55 56 H48 Q45 56 45 53 Z M60 45 H72 V53 Q72 56 69 56 H63 Q60 56 60 53 Z"/><path class="stroke" style="stroke-width:2.6" d="M58 48 H60"/>{% elif 'glasses' in items %}<circle class="stroke" style="stroke-width:2.4" cx="52" cy="50" r="6.4"/><circle class="stroke" style="stroke-width:2.4" cx="64" cy="50" r="6.4"/><path class="stroke" style="stroke-width:2.4" d="M58.4 49.5 H57.6"/>{% endif %}
     </g>
     {# --- 기분 표시 (스토리에서 data-mood 로 켜져요) --- #}
     <g class="moods">
@@ -89,7 +91,7 @@
   <path class="arrow" d="M70 52 L82 63 M82 63 L81 55 M82 63 L74 62"/>
   <text class="anno" x="570" y="44">{{ other }}</text>
   <path class="arrow" d="M552 52 L540 63 M540 63 L541 55 M540 63 L548 62"/>
-  {{ char(40, '#FFD43B', false, '', '', player_items()) }}
+  {{ char(40, player_hat(), false, '', '', player_items()) }}
   {{ char(480, '#4DABF7', true, 'right') }}
 </svg>
 {%- endmacro %}
