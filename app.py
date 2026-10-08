@@ -139,6 +139,8 @@ def home():
         stats=stats,
         quests=game.daily_quests(),
         islands=storage.load_sample("industries"),
+        cal=game.activity_calendar(),
+        tip=(lambda tips: tips[date.today().toordinal() % len(tips)])(storage.load_sample("tips")),
     )
 
 
@@ -201,7 +203,7 @@ def trade():
     data = storage.load_sample("trade")
     known = {k["term_id"] for k in storage.read_all("known_terms")}
     notes = newest_first([n for n in storage.read_all("notes") if n.get("target_type") == "trade"])
-    return render_template("trade.html", t=data, known=known, notes=notes)
+    return render_template("trade.html", t=data, known=known, notes=notes, inco=storage.load_sample("incoterms"))
 
 
 @app.route("/news")
@@ -280,6 +282,7 @@ def log():
         writings=newest_first(storage.read_all("writings")),
         unknowns=newest_first(storage.read_all("unknowns")),
         names=names,
+        cal=game.activity_calendar(),
     )
 
 
@@ -327,6 +330,26 @@ def api_term_toggle(term_id):
         return jsonify(known=False)
     storage.add("known_terms", {"term_id": term_id})
     return jsonify(known=True)
+
+
+# ---------------------------------------------------------------- 용어 퀴즈 결과 저장
+@app.post("/api/term/<term_id>/quiz")
+def api_term_quiz(term_id):
+    """맞히면 '외운 용어'로, 틀리면 외운 표시를 풀고 '모르는 것'에 한 번만 담아요."""
+    terms = {t["id"]: t for t in storage.load_sample("trade")["terms"]}
+    if term_id not in terms:
+        return jsonify(error="unknown term"), 404
+    correct = bool((request.get_json(silent=True) or {}).get("correct"))
+    found = next((k for k in storage.read_all("known_terms") if k["term_id"] == term_id), None)
+    if correct and not found:
+        storage.add("known_terms", {"term_id": term_id})
+    if not correct:
+        if found:
+            storage.delete("known_terms", found["id"])
+        label = "용어 복습: " + terms[term_id]["term"]
+        if not any(u.get("text") == label and not u.get("done") for u in storage.read_all("unknowns")):
+            storage.add("unknowns", {"text": label, "source": "용어 퀴즈"})
+    return jsonify(ok=True)
 
 
 # ---------------------------------------------------------------- 환율 API

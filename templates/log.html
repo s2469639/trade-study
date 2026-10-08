@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_macros.html" import del_btn, scene %}
+{% from "_macros.html" import heatmap, del_btn, scene %}
 {% block title %}나의 기록 · 무역공부노트{% endblock %}
 
 {% block content %}
@@ -17,6 +17,11 @@
     </div>{{ del_btn('notes', n.id) }}</div>
   {% else %}<div class="empty">아직 없어요.</div>{% endfor %}
 {% endmacro %}
+
+<div class="card">
+  <div class="card-title-row"><h2>{{ ico('fire') }} 공부 잔디</h2><span class="tag yellow">연속 {{ cal.streak }}일 · 공부한 날 {{ cal.days }}일</span></div>
+  {{ heatmap(cal) }}
+</div>
 
 <div class="tab-group">
   <div class="tabs" data-tabs="tab">

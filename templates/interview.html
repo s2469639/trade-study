@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_macros.html" import del_btn, scene %}
+{% from "_macros.html" import char, del_btn, scene %}
 {% block title %}해외영업 연결 · 무역공부노트{% endblock %}
 
 {% block content %}
@@ -11,9 +11,47 @@
 
 <div class="tab-group">
   <div class="tabs" data-tabs="tab">
+    <button class="tab" data-tab="mock">{{ ico('mic') }} 모의 면접</button>
     <button class="tab" data-tab="random">{{ ico('dice') }} 랜덤 연습</button>
     <button class="tab" data-tab="list">{{ ico('todo') }} 전체 질문</button>
     <button class="tab" data-tab="explain">{{ ico('speech') }} 설명해보기</button>
+  </div>
+
+  {# ---------- 모의 면접 ---------- #}
+  <div class="tab-panel" data-panel="mock">
+    <div class="card" id="mock">
+      <div id="mockSetup">
+        <h2>모의 면접</h2>
+        <p class="muted">면접관 {{ cast.mentor.name }}가 질문해요. 시간 안에 답변을 쓰면, 핵심 키워드를 얼마나 담았는지 알려줘요. 답변은 자동으로 저장돼서 경험치도 올라요.</p>
+        <div class="row">
+          <select id="mockScope" style="width:auto"><option value="">전체 질문</option><option value="common">공통 질문</option><option value="industry">산업별 질문</option><option value="company">기업별 질문</option></select>
+          <select id="mockCount" style="width:auto"><option>3</option><option selected>5</option><option>8</option></select>
+          <span class="note">문제</span>
+          <button class="btn" id="mockStart" type="button">면접 시작</button>
+        </div>
+      </div>
+      <div id="mockPlay" hidden>
+        <svg class="scene stage" viewBox="0 0 620 220" role="img" aria-label="면접 장면">
+          <path class="stroke" style="filter:url(#wobble2)" d="M8 196 C 120 192, 250 200, 360 196 S 540 193, 612 196"/>
+          <text class="anno" x="80" y="42">{{ cast.player.name }}</text>
+          <text class="anno" x="530" y="42">면접관 {{ cast.mentor.name }}</text>
+          {{ char(30, cast.player.hat, false, '', 'bbiyak', player_items(), 58) }}
+          {{ char(480, cast.mentor.hat, true, 'right', 'pado', [], 58) }}
+        </svg>
+        <div class="who-tag" style="--tag:{{ cast.mentor.hat }}">면접관 {{ cast.mentor.name }}</div>
+        <p class="line" id="mockQ"></p>
+        <div class="timebar"><i id="mockBar"></i></div>
+        <div class="row" style="justify-content:space-between; margin:4px 0 8px"><span class="note" id="mockProg"></span><span class="timer" id="mockTime">01:30</span></div>
+        <textarea id="mockAnswer" style="min-height:130px" placeholder="결론부터, 이유, 예시 순서로 답해 보세요"></textarea>
+        <div class="row" style="margin-top:12px">
+          <button class="btn" id="mockSubmit" type="button">답변 제출</button>
+          <button class="btn white" id="mockSkip" type="button">건너뛰기</button>
+        </div>
+        <div class="feedback" id="mockFb" hidden></div>
+        <div class="row" style="margin-top:12px; justify-content:flex-end"><button class="btn" id="mockNext" type="button" hidden>다음 질문</button></div>
+      </div>
+      <div id="mockEnd" hidden></div>
+    </div>
   </div>
 
   {# ---------- 랜덤 연습 ---------- #}
@@ -110,6 +148,7 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="{{ url_for('static', filename='js/mock.js') }}" defer></script>
 <script>
   // 랜덤 질문 뽑기 + 1분 타이머
   const QUESTIONS = {{ questions | tojson }};
@@ -142,7 +181,7 @@
     qt.textContent = q.text;
     qt.classList.remove("swap"); void qt.offsetWidth; qt.classList.add("swap");
     const hint = document.getElementById("qHint");
-    hint.textContent = "{{ ico('bulb') }} " + q.hint; hint.style.display = "none";
+    hint.textContent = "힌트: " + q.hint; hint.style.display = "none";
     document.getElementById("answerBtn").disabled = false;
     resetTimer();
   });

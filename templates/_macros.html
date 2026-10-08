@@ -93,3 +93,14 @@
   {{ char(480, '#4DABF7', true, 'right') }}
 </svg>
 {%- endmacro %}
+
+
+{# 공부 잔디: 최근 14주, 하루에 기록한 개수가 많을수록 진한 노랑 #}
+{% macro heatmap(cal) -%}
+<div class="heatmap">
+  <div class="hm-days">{% for d in cal.weekdays %}<span>{{ d if loop.index0 in (0, 2, 4) else '' }}</span>{% endfor %}</div>
+  <div class="hm-grid">
+    {% for week in cal.weeks %}<div class="hm-col">{% for c in week %}<i class="hm l{{ c.level }} {{ 'future' if c.future }}" title="{{ c.date }} · {{ c.n }}개"></i>{% endfor %}</div>{% endfor %}
+  </div>
+</div>
+{%- endmacro %}

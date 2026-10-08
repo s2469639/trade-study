@@ -549,3 +549,50 @@ input[type=number]:focus { background: #FFFDF0; box-shadow: 0 0 0 4px #BFE0FB; }
 .nav-link:hover { transform: translateX(4px); }
 .me-card:hover { transform: scale(1.02); }
 .closet-item:hover, .fx-tile:hover { transform: translateY(-3px); }
+
+/* ============ 새 기능: 잔디, 인코텀즈, 퀴즈, 모의 면접 ============ */
+.sticky-note.tip { margin-top: 14px; max-width: 560px; text-align: left; transform: rotate(-.8deg); }
+.sticky-note.tip b { font-family: var(--font-title); font-weight: 400; margin-right: 4px; }
+
+.heatmap { display: flex; gap: 10px; align-items: flex-start; overflow-x: auto; padding: 4px 2px; }
+.hm-days { display: grid; grid-template-rows: repeat(7, 22px); gap: 4px; font-size: .8rem; color: var(--gray); line-height: 22px; }
+.hm-grid { display: flex; gap: 4px; }
+.hm-col { display: grid; grid-template-rows: repeat(7, 22px); gap: 4px; }
+.hm { display: block; width: 22px; height: 22px; border-radius: 6px 7px 5px 7px; border: 2px solid #d6d6d0; background: #fff; transition: transform .25s var(--spring); }
+.hm:hover { transform: scale(1.25) rotate(-6deg); }
+.hm.l1 { background: #FFF1B8; border-color: #E9D78A; } .hm.l2 { background: #FFE066; border-color: #D9B72E; }
+.hm.l3 { background: #FFD43B; border-color: var(--ink); } .hm.l4 { background: #F2B600; border-color: var(--ink); }
+.hm.future { opacity: .35; border-style: dashed; }
+
+.inco-chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 4px 0 18px; }
+.inco-chips .chip { font-size: 1.05rem; padding: 2px 16px; }
+.inco-stage { display: flex; align-items: flex-end; gap: 6px; }
+.inco-char { width: 64px; height: 136px; flex: none; overflow: visible; }
+.inco-track { position: relative; flex: 1; min-width: 0; padding-top: 58px; }
+.inco-steps { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 0; border: 3px solid var(--ink); border-radius: var(--br-sm); overflow: hidden; background: #fff; }
+.inco-step { min-height: 112px; padding: 6px 2px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 4px; text-align: center; font-size: .78rem; line-height: 1.25; border-left: 2px dashed rgba(34,34,34,.35); transition: background .45s var(--ease); }
+.inco-step:first-child { border-left: 0; }
+.inco-step b { width: 22px; height: 22px; display: grid; place-items: center; border: 2px solid var(--ink); border-radius: 50%; background: #fff; font-family: "Jua", "Pretendard", sans-serif; font-weight: 400; font-size: .85rem; }
+.inco-step.s { background: var(--yellow); } .inco-step.b { background: var(--sky-soft); }
+.risk-flag { position: absolute; top: 0; z-index: 3; width: 0; transition: left .65s var(--spring); pointer-events: none; }
+.risk-flag .ico { position: absolute; left: -4px; top: 6px; width: 40px; height: 54px; transform-origin: 8% 100%; animation: flagWave 2.4s ease-in-out infinite; }
+.risk-flag span { position: absolute; left: 36px; top: 4px; white-space: nowrap; font-size: .88rem; background: #fff; border: 2px solid var(--ink); border-radius: 999px; padding: 0 10px; }
+.risk-flag::after { content: ""; position: absolute; left: -1.5px; top: 58px; height: 124px; border-left: 3px dashed #e03131; }
+.risk-flag.edge-r .ico { left: -42px; } .risk-flag.edge-r span { left: auto; right: 38px; }
+@keyframes flagWave { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg); } }
+#incoRange { width: 100%; margin: 20px 0 6px; accent-color: var(--yellow-deep, #F2B600); height: 28px; cursor: pointer; }
+.inco-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; font-size: .95rem; }
+.inco-legend .lg { display: inline-block; width: 18px; height: 18px; vertical-align: -3px; margin-right: 6px; border: 2px solid var(--ink); border-radius: 5px; }
+.inco-legend .lg.s { background: var(--yellow); } .inco-legend .lg.b { background: var(--sky-soft); }
+.inco-info { margin-top: 16px; padding: 14px 18px; border: 2.5px solid var(--ink); border-radius: var(--br-sm); background: #fff; }
+.inco-info.swap { animation: rise .4s var(--ease); }
+.inco-info h3 { margin-bottom: 4px; }
+.inco-accident { margin-top: 16px; display: grid; gap: 8px; }
+.inco-accident select { max-width: 360px; }
+@media (max-width: 760px) { .inco-char { display: none; } .inco-step span { font-size: .62rem; } .risk-flag span { display: none; } }
+
+.quiz-desc { font-size: 1.25rem; line-height: 1.7; margin: 0 0 12px; }
+.timebar { height: 12px; border: 2px solid var(--ink); border-radius: 999px; background: #fff; overflow: hidden; margin: 6px 0 0; }
+.timebar i { display: block; height: 100%; width: 100%; background: var(--sky); transition: width 1s linear; }
+#mock .line { font-size: 1.35rem; line-height: 1.6; margin: 10px 0 6px; min-height: 2.8em; }
+#mock .kw { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }

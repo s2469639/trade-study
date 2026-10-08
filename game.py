@@ -3,7 +3,7 @@
 기록(공부한 내용)은 storage.py 가 읽어오고, 여기서는 그 숫자를 점수로 바꿔요.
 점수는 따로 저장하지 않고 매번 기록에서 계산해서, 기록을 지우면 점수도 같이 줄어요.
 """
-from datetime import date
+from datetime import date, timedelta
 
 import storage
 
@@ -121,3 +121,39 @@ def celebrate(status):
         progress["seen_level"] = max(progress["seen_level"], status["level"])
         storage.save_progress(progress)
     return {"stamps": new_stamps, "level": new_level, "items": new_items}
+
+
+ACTIVITY_COLLECTIONS = ("logs", "notes", "news", "writings", "phrases", "answers", "explains", "jobs", "known_terms")
+
+
+def activity_calendar(weeks=14):
+    """공부 잔디: 최근 몇 주 동안 하루에 몇 개를 기록했는지 (칸 색깔 0~4단계)와 연속 일수."""
+    counts = {}
+    for col in ACTIVITY_COLLECTIONS:
+        for it in storage.read_all(col):
+            d = it.get("date")
+            if d:
+                counts[d] = counts.get(d, 0) + 1
+
+    today = date.today()
+    start = today - timedelta(days=today.weekday() + 7 * (weeks - 1))      # 월요일부터 시작하는 주
+    level = lambda n: 0 if n == 0 else 1 if n <= 2 else 2 if n <= 5 else 3 if n <= 9 else 4
+    grid = []
+    for w in range(weeks):
+        col = []
+        for dow in range(7):
+            day = start + timedelta(days=w * 7 + dow)
+            key = day.strftime("%Y-%m-%d")
+            n = counts.get(key, 0)
+            col.append({"date": key, "n": n, "level": level(n), "future": day > today})
+        grid.append(col)
+
+    def streak_from(day):
+        n = 0
+        while counts.get(day.strftime("%Y-%m-%d"), 0) > 0:
+            n += 1
+            day -= timedelta(days=1)
+        return n
+
+    streak = streak_from(today) or streak_from(today - timedelta(days=1))   # 오늘 아직 안 했어도 어제까지 이어졌으면 유지
+    return {"weeks": grid, "streak": streak, "days": len(counts), "weekdays": ["월", "화", "수", "목", "금", "토", "일"]}

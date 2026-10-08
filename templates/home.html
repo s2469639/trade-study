@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_macros.html" import del_btn, char %}
+{% from "_macros.html" import del_btn, char, heatmap %}
 {% block title %}월드맵 · 무역공부노트{% endblock %}
 
 {% block scripts %}
@@ -11,6 +11,7 @@
   <h1>무역공부노트 월드맵</h1>
   <p class="lead">{{ greeting }}, {{ cast.player.name }}! {{ today }} · 지금까지 <b>{{ study_days }}일</b> 공부했어요</p>
   <p class="note">섬이나 마을을 누르면 {{ cast.player.name }}가 배를 타고 달려가요. 섬의 별은 스탬프예요.</p>
+  <div class="sticky-note tip"><b>{{ cast.mentor.name }}의 한마디</b> · {{ tip }}</div>
 </section>
 
 <div class="card map-card">
@@ -30,7 +31,7 @@
       <div>
         <h2>{{ cast.player.name }}</h2>
         <p class="note">{{ cast.player.title }}</p>
-        <p class="lv">Lv.{{ me.level }} <span class="note">{{ me.xp }}xp</span></p>
+        <p class="lv">Lv.{{ me.level }} <span class="note">{{ me.xp }}xp · 연속 {{ cal.streak }}일</span></p>
         <span class="xp-bar big"><i style="width:{{ me.pct }}%"></i></span>
         {% if me.next_need %}
           <p class="small muted" style="margin-top:6px">다음 레벨까지 {{ me.next_need - me.xp }}xp
@@ -71,6 +72,12 @@
       <div><b>{{ me.chapters_done }}/4</b><span>스토리</span></div>
     </div>
   </div>
+</div>
+
+<div class="card" style="margin-top:28px">
+  <div class="card-title-row"><h2>{{ ico('fire') }} 공부 잔디</h2><span class="tag yellow">연속 {{ cal.streak }}일</span></div>
+  {{ heatmap(cal) }}
+  <p class="note" style="margin:8px 0 0">하루에 기록을 많이 남길수록 칸이 진해져요.</p>
 </div>
 
 <h2 class="section-title">오늘의 공부 도구</h2>

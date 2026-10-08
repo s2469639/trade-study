@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_macros.html" import note_list, note_form, scene %}
+{% from "_macros.html" import note_list, note_form, scene, char %}
 {% block title %}무역 공부 · 무역공부노트{% endblock %}
 
 {% block content %}
@@ -16,6 +16,7 @@
     <button class="tab" data-tab="payment">{{ ico('coins') }} 결제</button>
     <button class="tab" data-tab="transport">{{ ico('truck') }} 운송</button>
     <button class="tab" data-tab="customs">{{ ico('shield') }} 통관</button>
+    <button class="tab" data-tab="inco">{{ ico('flag') }} 인코텀즈</button>
     <button class="tab" data-tab="fx">{{ ico('coins') }} 환율</button>
     <button class="tab" data-tab="terms">{{ ico('abc') }} 용어집</button>
     <button class="tab" data-tab="cases">{{ ico('search') }} 사례</button>
@@ -102,6 +103,38 @@
     </div>
   </div>
 
+  {# ---------- 인코텀즈 ---------- #}
+  <div class="tab-panel" data-panel="inco">
+    <div class="card inco-card" id="inco">
+      <p class="muted" style="margin-top:0">규칙을 골라 보세요. <b>노란 칸</b>은 수출자({{ cast.player.name }}), <b>하늘색 칸</b>은 수입자({{ cast.mentor.name }})가 맡는 일이에요. 깃발은 <b>위험이 넘어가는 지점</b>이에요.</p>
+      <div class="inco-chips" id="incoChips"></div>
+      <div class="inco-stage">
+        <svg class="inco-char" viewBox="10 -26 80 170" aria-hidden="true">{{ char(0, cast.player.hat, false, '', '', me.equipped, 0) }}</svg>
+        <div class="inco-track">
+          <div class="inco-steps" id="incoSteps"></div>
+          <div class="risk-flag" id="riskFlag">{{ ico('flag', 'lg') }}<span>위험 이전</span></div>
+        </div>
+        <svg class="inco-char" viewBox="10 -26 80 170" aria-hidden="true">{{ char(0, cast.mentor.hat, true, 'right', '', [], 0) }}</svg>
+      </div>
+      <input type="range" id="incoRange" min="0" max="10" value="3" aria-label="인코텀즈 규칙 고르기">
+      <div class="inco-legend"><span><i class="lg s"></i>수출자 부담</span><span><i class="lg b"></i>수입자 부담</span><span class="note">슬라이더를 오른쪽으로 밀수록 수출자 책임이 커져요</span></div>
+      <div class="inco-info" id="incoInfo"></div>
+      <div class="inco-accident">
+        <label for="incoAcc">만약 이 구간에서 화물에 사고가 난다면?</label>
+        <select id="incoAcc"></select>
+        <div class="sim-result" id="incoAccResult"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>알아두기</h3>
+      <ul>
+        <li>인코텀즈는 <b>비용과 위험을 누가, 어디까지 맡는지</b>를 정하는 규칙이에요. 물품의 소유권이 언제 넘어가는지나 대금 결제 방법까지 정해주지는 않아요.</li>
+        <li>FAS, FOB, CFR, CIF는 <b>해상과 내수로 운송 전용</b>이에요. 컨테이너 화물에는 FCA, CPT, CIP 같은 모든 운송방식용 규칙을 권장해요.</li>
+        <li>여기서는 이해를 돕기 위해 <b>단순화한 모델</b>이에요. FCA처럼 인도 장소에 따라 달라지는 규칙은 선적항 터미널로 가정했어요. 실제 계약에서는 Incoterms 2020 원문과 계약 조건을 꼭 확인하세요.</li>
+      </ul>
+    </div>
+  </div>
+
   {# ---------- 환율 ---------- #}
   <div class="tab-panel" data-panel="fx">
     <div class="grid cols-2" id="fxCalc">
@@ -144,6 +177,11 @@
 
   {# ---------- 용어집 ---------- #}
   <div class="tab-panel" data-panel="terms">
+    <div class="row" style="justify-content:center; margin-bottom:18px">
+      <button class="btn" id="termQuizBtn" type="button">{{ ico('dice') }} 용어 퀴즈 시작</button>
+      <span class="note">설명을 보고 용어를 맞혀요. 맞히면 '외운 용어', 틀리면 '모르는 것'에 담겨요.</span>
+    </div>
+    <div class="card" id="termQuiz" hidden></div>
     <div class="filter-bar" data-target="#termList">
       <input class="search" type="text" data-target="#termList" placeholder="{{ ico('search') }} 용어 검색">
       <button class="chip active" data-key="category" data-value="">전체</button>
@@ -187,6 +225,9 @@
 
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/fx.js') }}"></script>
+<script>const INCO = {{ inco | tojson }}; const TERMS = {{ t.terms | tojson }};</script>
+<script src="{{ url_for('static', filename='js/incoterms.js') }}"></script>
+<script src="{{ url_for('static', filename='js/termquiz.js') }}"></script>
 <script>
   // 프로세스 단계를 누르면 오른쪽에 설명을 보여준다
   const PROCESS = {{ t.process | tojson }};
