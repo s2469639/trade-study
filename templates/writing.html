@@ -1,11 +1,12 @@
 {% extends "base.html" %}
-{% from "_macros.html" import del_btn %}
+{% from "_macros.html" import del_btn, scene %}
 {% block title %}글쓰기 · 무역공부노트{% endblock %}
 
 {% block content %}
 <div class="page-head">
   <h1>✍️ 글쓰기 공부</h1>
   <p>잘 쓴 글을 뜯어보고, 내 생각을 써보고, 좋은 표현은 모아둬요.</p>
+  {{ scene('글쓰기', '연습', '나', '독자') }}
 </div>
 
 <div class="tab-group">

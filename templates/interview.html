@@ -1,11 +1,12 @@
 {% extends "base.html" %}
-{% from "_macros.html" import del_btn %}
+{% from "_macros.html" import del_btn, scene %}
 {% block title %}해외영업 연결 · 무역공부노트{% endblock %}
 
 {% block content %}
 <div class="page-head">
   <h1>🎤 해외영업 연결</h1>
   <p>공부한 내용을 면접 답변으로 바꿔보는 곳이에요. 소리 내어 말해보고, 적어서 저장해요.</p>
+  {{ scene('면접', '연습', '나', '면접관') }}
 </div>
 
 <div class="tab-group">

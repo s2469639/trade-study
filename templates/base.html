@@ -13,6 +13,12 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
+  <!-- 손으로 그은 듯 선을 살짝 일렁이게 하는 필터 (카드/버튼 테두리, 캐릭터에 사용) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <filter id="wobble"  x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.03"  numOctaves="2" seed="3"  result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="4"/></filter>
+    <filter id="wobble2" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.025" numOctaves="2" seed="11" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="4.5"/></filter>
+    <filter id="wobble3" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.04"  numOctaves="2" seed="27" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3"/></filter>
+  </svg>
   <aside class="sidebar">
     <a class="logo" href="{{ url_for('home') }}"><span>무역공부노트</span><small>해외영업 가는 길 ✈️</small></a>
     {% for endpoint, emoji, label in NAV %}

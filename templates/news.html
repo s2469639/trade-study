@@ -1,11 +1,12 @@
 {% extends "base.html" %}
-{% from "_macros.html" import del_btn %}
+{% from "_macros.html" import del_btn, scene %}
 {% block title %}뉴스 & 시사 · 무역공부노트{% endblock %}
 
 {% block content %}
 <div class="page-head">
   <h1>📰 뉴스 & 시사</h1>
   <p>뉴스를 읽고 끝내지 말고, 배경지식과 '왜 중요한지'까지 내 말로 적어요.</p>
+  {{ scene('뉴스', '읽기', '나', '세상') }}
 </div>
 
 <div class="grid cols-2" style="align-items:start">

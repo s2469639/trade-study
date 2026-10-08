@@ -1,11 +1,12 @@
 {% extends "base.html" %}
-{% from "_macros.html" import note_list, note_form %}
+{% from "_macros.html" import note_list, note_form, scene %}
 {% block title %}무역 공부 · 무역공부노트{% endblock %}
 
 {% block content %}
 <div class="page-head">
   <h1>🚢 무역 공부</h1>
   <p>수출입이 어떻게 흘러가는지, 서류와 용어까지 한 번에 정리해요.</p>
+  {{ scene('수출', '수입', '수출자', '수입자') }}
 </div>
 
 <div class="tab-group">

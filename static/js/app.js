@@ -21,7 +21,7 @@ function toast(msg) {
 // 🎉 톡 터지는 색종이 (x, y 는 화면 좌표)
 function burst(x, y, count = 16) {
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  const colors = ["#FFD43B", "#4DABF7", "#1C7ED6", "#FFE88A", "#A5D8FB"];
+  const colors = ["#FFD43B", "#4DABF7", "#2F7FD1", "#FFF1B8", "#D9EDFD"];
   for (let i = 0; i < count; i++) {
     const p = document.createElement("span");
     p.className = "confetti";
@@ -239,3 +239,40 @@ document.querySelectorAll("[data-count]").forEach((el) => {
     if (k < 1) requestAnimationFrame(tick);
   })(t0);
 });
+
+// ---------- 캐릭터: 누르면 폴짝 + 말풍선, 눈동자는 마우스를 따라감 ----------
+(function () {
+  const lines = ["오늘도 한 줄!", "화이팅 ✊", "FOB 기억나?", "수출은 타이밍!", "뉴스 하나만 더", "L/C 외웠어?", "잘하고 있어 :)", "면접 가보자!"];
+  document.querySelectorAll(".scene .char").forEach((c) => {
+    c.addEventListener("click", () => {
+      c.classList.remove("hop"); void c.getBoundingClientRect(); c.classList.add("hop");
+      const r = c.getBoundingClientRect();
+      const b = document.createElement("div");
+      b.className = "speech";
+      b.textContent = lines[Math.floor(Math.random() * lines.length)];
+      b.style.left = r.left + r.width / 2 + scrollX + "px";
+      b.style.top = r.top + scrollY - 34 + "px";
+      document.body.appendChild(b);
+      setTimeout(() => b.remove(), 1700);
+      burst(r.left + r.width / 2, r.top + 20, 10);
+    });
+    c.addEventListener("animationend", () => c.classList.remove("hop"));
+  });
+
+  const wraps = document.querySelectorAll(".scene .eyes-wrap");
+  if (!wraps.length || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  let raf = null, mx = 0, my = 0;
+  addEventListener("mousemove", (e) => {
+    mx = e.clientX; my = e.clientY;
+    if (raf) return;
+    raf = requestAnimationFrame(() => {
+      raf = null;
+      wraps.forEach((w) => {
+        const r = w.getBoundingClientRect();
+        const dx = mx - (r.left + r.width / 2), dy = my - (r.top + r.height / 2);
+        const d = Math.hypot(dx, dy) || 1, k = Math.min(d / 120, 1) * 4;
+        w.style.transform = `translate(${(dx / d) * k}px, ${(dy / d) * k}px)`;
+      });
+    });
+  });
+})();
