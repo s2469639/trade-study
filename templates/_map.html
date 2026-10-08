@@ -6,8 +6,8 @@
   'M-104 4 C-98 -42 -50 -70 6 -66 C62 -74 108 -30 98 14 C92 60 40 76 -8 72 C-66 70 -108 48 -104 4 Z'
 ] %}
 {% set towns = [
-  ('story', 'ship', '무역 항구', 110), ('trade', 'book', '무역 학원', 300), ('news', 'news', '신문사', 490),
-  ('writing', 'pencil', '글쓰기 도서관', 690), ('interview', 'mic', '면접 회관', 890), ('log', 'notebook', '나의 일지', 1070)
+  ('story', 'ship', '무역 항구', 120), ('trade', 'book', '무역 학원', 360), ('news', 'news', '신문사', 600),
+  ('writing', 'pencil', '글쓰기 도서관', 840), ('interview', 'mic', '면접 회관', 1080)
 ] %}
 {% set visited = me.progress.visited %}
 {% set explored = islands | selectattr('id', 'in', visited) | list | length %}
@@ -17,6 +17,7 @@
     <span class="hud-pill">{{ ico('map') }} 탐험 {{ explored }}/{{ islands | length }}섬</span>
     <span class="hud-pill">{{ ico('star') }} 스탬프 {{ me.stamp_done }}/{{ me.stamp_total }}</span>
     <span class="hud-pill">Lv.{{ me.level }}</span>
+    <a class="hud-pill link" href="{{ url_for('log') }}">{{ ico('notebook') }} 나의 일지</a>
   </div>
   <div class="map-tip" id="mapTip" hidden></div>
 
@@ -76,7 +77,7 @@
 
     {# ---- 삐약이의 배 ---- #}
     <g id="wakes"></g>
-    <g id="ship" class="ship" style="transform:translate(110px,552px)">
+    <g id="ship" class="ship" style="transform:translate(120px,552px)">
       <g class="ship-bob">
         <g id="shipFace">
           <path class="hull" d="M-38 -4 H38 L28 15 H-28 Z"/>
