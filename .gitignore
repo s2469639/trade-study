@@ -6,3 +6,4 @@ data/user/*.tmp
 .env
 .env.*
 !.env.example
+data/cache/

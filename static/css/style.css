@@ -508,3 +508,21 @@ a.chapter:hover { transform: translateY(-4px) rotate(-.5deg); }
   .closet-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .chapter { flex-wrap: wrap; }
 }
+
+/* ---- 환율 ---- */
+.fx-strip .fx-board { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+.fx-tile { text-align: center; padding: 10px 6px; border: 2.5px solid var(--ink); border-radius: var(--br-sm); background: #fff; transition: transform .3s var(--spring); }
+.fx-tile:hover { transform: translateY(-4px) rotate(-1.5deg); background: var(--yellow-soft); }
+.fx-tile b { display: block; font-family: "Jua", "Pretendard", sans-serif; font-size: 1.5rem; line-height: 1.3; font-weight: 400; }
+.fx-tile small { font-size: .9rem; margin-left: 2px; color: #666; }
+.fx-error { color: #c92a2a; }
+.fx-pair { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: end; }
+.fx-pair .btn { margin-bottom: 18px; }
+.fx-result { font-family: "Jua", "Pretendard", sans-serif; font-size: 1.6rem; padding: 12px 16px; border: 2.5px dashed var(--ink); border-radius: var(--br-sm); background: #fff; text-align: center; word-break: break-all; }
+.sim-result { padding: 14px 16px; border: 2.5px solid var(--ink); border-radius: var(--br-sm); background: #fff; line-height: 1.8; }
+.sim-result.good { background: var(--ok-soft); }
+.sim-result.bad { background: var(--danger-soft); }
+label.radio { display: inline-flex; align-items: center; gap: 6px; font-size: 1rem; color: var(--ink); cursor: pointer; margin: 0; }
+input[type=number] { width: 100%; font: inherit; color: var(--ink); background: #fff; border: 2.5px solid var(--ink); border-radius: var(--br-sm); padding: 9px 14px; outline: none; }
+input[type=number]:focus { background: #FFFDF0; box-shadow: 0 0 0 4px #BFE0FB; }
+@media (max-width: 760px) { .fx-strip .fx-board { grid-template-columns: repeat(2, minmax(0, 1fr)); } .fx-pair { grid-template-columns: 1fr; } }

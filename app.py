@@ -11,7 +11,10 @@ from flask import Flask, g, jsonify, render_template, request, send_file, redire
 from markupsafe import Markup
 
 import game
+import rates
 import storage
+
+rates.load_env()   # .env 의 API 키를 읽어와요
 
 app = Flask(__name__)
 
@@ -324,6 +327,12 @@ def api_term_toggle(term_id):
         return jsonify(known=False)
     storage.add("known_terms", {"term_id": term_id})
     return jsonify(known=True)
+
+
+# ---------------------------------------------------------------- 환율 API
+@app.get("/api/rates")
+def api_rates():
+    return jsonify(rates.get_rates())
 
 
 # ---------------------------------------------------------------- 게임 진행 저장 API
