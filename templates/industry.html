@@ -1,11 +1,12 @@
 {% extends "base.html" %}
-{% from "_macros.html" import note_list, note_form, bullets %}
+{% from "_macros.html" import note_list, note_form, bullets, scene %}
 {% block title %}산업 공부 · 무역공부노트{% endblock %}
 
 {% block content %}
 <div class="page-head">
   <h1>🏭 산업 공부</h1>
   <p>관심 산업을 고르고, 큰 그림부터 차근차근 정리해요.</p>
+  {{ scene('산업', '공부', '나', '시장') }}
 </div>
 
 <div class="picker">

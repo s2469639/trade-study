@@ -1,12 +1,18 @@
 {% extends "base.html" %}
-{% from "_macros.html" import del_btn %}
+{% from "_macros.html" import del_btn, scene %}
 {% block title %}홈 · 무역공부노트{% endblock %}
 
 {% block content %}
-<section class="hero">
-  <span class="doodle">✈️</span><span class="doodle d2">⭐</span><span class="doodle d3">📘</span>
-  <h1>{{ greeting }}</h1>
-  <p>{{ today }} · 지금까지 <b>{{ study_days }}일</b> 공부했어요. 오늘은 뭘 해볼까요?</p>
+<section class="home-hero">
+  <h1>무역공부노트</h1>
+  <p class="lead">{{ greeting }} · {{ today }} · 지금까지 <b>{{ study_days }}일</b> 공부했어요</p>
+  {{ scene('오늘의', '공부', '나', '바이어') }}
+  <p class="note" style="margin-top:6px">(캐릭터를 눌러보세요)</p>
+  <p class="ask">오늘은 어디부터 볼까요?</p>
+  <div class="row center">
+    <a class="btn big" href="{{ url_for('industry') }}">산업부터</a>
+    <a class="btn big white" href="{{ url_for('trade') }}">무역부터</a>
+  </div>
 </section>
 
 <div class="grid cols-4" style="margin-bottom:36px">

@@ -41,3 +41,38 @@
     <div class="empty">아직 비어 있어요. 조사해서 채워봐요!</div>
   {% endif %}
 {%- endmacro %}
+
+
+{# 막대 캐릭터 하나. x: 가로 위치, hat: 모자 색, flip: 왼쪽을 보게 뒤집기 #}
+{% macro char(x, hat, flip=false, cls='') -%}
+  <g transform="translate({{ x }},52)">
+   <g class="char {{ cls }}">
+    <g {% if flip %}transform="translate(100,0) scale(-1,1)"{% endif %} style="filter:url(#wobble3)">
+      <path class="stroke" d="M50 68 L50 100 M50 80 L34 96 M50 80 L66 96 M50 100 L40 138 M50 100 L60 138 M40 138 L31 138 M60 138 L69 138"/>
+      <path class="skin" style="fill:{{ hat }}" d="M33 30 L39 6 L63 6 L68 30 Z"/>
+      <path class="stroke" d="M60 6 C 70 -8, 82 2, 75 17"/>
+      <circle class="skin" cx="50" cy="48" r="20"/>
+      <g class="eyes-wrap"><g class="eyes"><circle class="eye" cx="52" cy="50" r="3.2"/><circle class="eye" cx="63" cy="50" r="3.2"/></g></g>
+    </g>
+   </g>
+  </g>
+{%- endmacro %}
+
+{# 두 명의 캐릭터 + 가운데 회색 상자(제목)가 있는 장면. 캐릭터를 누르면 말풍선이 나와요 #}
+{% macro scene(l1, l2='', you='나', other='바이어') -%}
+<svg class="scene" viewBox="0 0 620 210" role="img" aria-label="{{ l1 }} {{ l2 }}">
+  <path class="stroke" style="filter:url(#wobble2)" d="M8 190 C 120 186, 250 194, 360 190 S 540 187, 612 190"/>
+  <g class="machine" style="filter:url(#wobble)">
+    <path class="box" d="M222 190 L222 46 Q222 38 230 38 L390 38 Q398 38 398 46 L398 190 Z"/>
+    <path class="box" d="M222 190 C 212 190, 206 184, 203 176 L 222 176 M398 190 C 408 190, 414 184, 417 176 L 398 176"/>
+  </g>
+  <text class="label" x="310" y="102">{{ l1 }}</text>
+  {% if l2 %}<text class="label" x="310" y="138">{{ l2 }}</text>{% endif %}
+  <text class="anno" x="52" y="44">{{ you }}</text>
+  <path class="arrow" d="M70 52 L82 63 M82 63 L81 55 M82 63 L74 62"/>
+  <text class="anno" x="570" y="44">{{ other }}</text>
+  <path class="arrow" d="M552 52 L540 63 M540 63 L541 55 M540 63 L548 62"/>
+  {{ char(40, '#FFD43B') }}
+  {{ char(480, '#4DABF7', true, 'right') }}
+</svg>
+{%- endmacro %}
