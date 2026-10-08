@@ -698,12 +698,7 @@ input[type=number]:focus { background: #FFFDF0; box-shadow: 0 0 0 4px #BFE0FB; }
 
 /* 섬: 안 가본 섬은 안개, 다 모으면 깃발 */
 .map .island { transition: opacity .3s; }
-.map .island.fog { opacity: .78; }
 .map .island.fog:hover, .map .island.fog:focus-visible { opacity: 1; }
-.map .island.fog .isle-shape path { fill: #F1F3F2 !important; stroke: #9a9a9a; stroke-dasharray: 12 9; }
-.map .island.fog .map-ico { opacity: .32; filter: grayscale(1); }
-.map .island.fog .isle-name { fill: #9a9a9a; }
-.map .island.fog .star { opacity: .3; }
 .map .fog-badge circle { fill: #fff; stroke: var(--ink); stroke-width: 3; }
 .map .fog-badge text { font-size: 22px; text-anchor: middle; fill: var(--ink); }
 .map .island.done .isle-shape path { stroke: #E5A800; stroke-width: 5; }
@@ -756,11 +751,17 @@ input[type=number]:focus { background: #FFFDF0; box-shadow: 0 0 0 4px #BFE0FB; }
 .map .ripple { fill: none; stroke: #fff; stroke-width: 4; stroke-linecap: round; opacity: .95; transform-box: fill-box; transform-origin: center; animation: ripple 3.6s ease-in-out infinite; }
 .map .ripple.r2 { stroke-width: 3; opacity: .8; animation-delay: -1.8s; }
 @keyframes ripple { 0%, 100% { transform: scale(1); opacity: .95; } 50% { transform: scale(1.05); opacity: .55; } }
-.map .island.fog .isle-shape .side { fill: #D5D9D8 !important; }
-.map .island.fog .isle-shape path { stroke: #9a9a9a; }
-.map .island.fog .isle-shape .top { fill: #F1F3F2 !important; }
-.map .island.fog .ripple { opacity: .45; animation: none; }
 .map .island.done .isle-shape .side, .map .island.done .isle-shape .top { stroke: #E5A800; stroke-width: 5; }
 .map .region { fill: #3d6d94; font-size: 23px; }
 .map-hud { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); z-index: 3; padding: 0; }
 @media (max-width: 960px) { .map-hud { position: sticky; left: 0; transform: none; padding: 10px 12px 0; justify-content: flex-start; } }
+
+/* 위까지 전부 바다. 안 가본 섬도 처음부터 자기 색이 은은하게 보이게 */
+.map .island.fog { opacity: 1; }
+.map .island.fog .isle-shape .top { fill-opacity: .72; stroke: #8f9ba3; stroke-dasharray: 12 9; }
+.map .island.fog .isle-shape .side { fill: #D9C58A !important; fill-opacity: .7; stroke: #8f9ba3; }
+.map .island.fog .map-ico { opacity: .6; filter: grayscale(.35); }
+.map .island.fog .isle-name { fill: #6f7a82; }
+.map .island.fog .star { opacity: .55; }
+.map .island.fog .ripple { opacity: .8; animation: ripple 3.6s ease-in-out infinite; }
+.map .island.fog:hover .isle-shape .top, .map .island.fog:focus-visible .isle-shape .top { fill-opacity: .9; }
