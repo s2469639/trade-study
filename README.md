@@ -62,3 +62,4 @@ trade_study/
 - **스토리 늘리기**: `data/story.json` 에 챕터를 같은 모양으로 추가하면 돼요 (say 대사 / choice 선택지).
 - **섬 퀴즈 고치기**: `data/quiz.json`.
 - **아이콘 추가**: `templates/_icons.html` 에 symbol 을 추가하고 `{{ ico('이름') }}` 으로 불러요. (이모지는 쓰지 않아요)
+- **환율 API (ExchangeRate-API)**: `.env.example` 을 `.env` 로 복사하고 `EXCHANGE_API_KEY=내키` 를 넣으면, 홈의 "오늘의 환율"과 무역 학원의 환율 계산기·환차손익 시뮬레이터가 켜져요. 키는 서버에서만 쓰고, 결과는 `data/cache/` 에 6시간 저장해서 무료 호출 횟수를 아껴요. (`rates.py`)

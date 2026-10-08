@@ -16,6 +16,7 @@
     <button class="tab" data-tab="payment">{{ ico('coins') }} 결제</button>
     <button class="tab" data-tab="transport">{{ ico('truck') }} 운송</button>
     <button class="tab" data-tab="customs">{{ ico('shield') }} 통관</button>
+    <button class="tab" data-tab="fx">{{ ico('coins') }} 환율</button>
     <button class="tab" data-tab="terms">{{ ico('abc') }} 용어집</button>
     <button class="tab" data-tab="cases">{{ ico('search') }} 사례</button>
   </div>
@@ -101,6 +102,46 @@
     </div>
   </div>
 
+  {# ---------- 환율 ---------- #}
+  <div class="tab-panel" data-panel="fx">
+    <div class="grid cols-2" id="fxCalc">
+      <div class="card sky">
+        <h2>환율 계산기</h2>
+        <div class="field"><label>금액</label><input type="number" id="fxAmount" value="1000" min="0" step="any"></div>
+        <div class="fx-pair">
+          <div class="field"><label>바꿀 통화</label><select id="fxFrom"></select></div>
+          <button type="button" class="btn small white" id="fxSwap" title="맞바꾸기">⇄</button>
+          <div class="field"><label>받을 통화</label><select id="fxTo"></select></div>
+        </div>
+        <div class="fx-result" id="fxResult">...</div>
+        <p class="note" id="fxMsg" style="margin:8px 0 0"></p>
+      </div>
+
+      <div class="card yellow">
+        <h2>환차손익 시뮬레이터</h2>
+        <p class="muted small">계약할 때와 결제할 때 환율이 다르면 원화로 바꾼 금액이 달라져요.</p>
+        <div class="row" style="margin-bottom:12px">
+          <label class="radio"><input type="radio" name="simRole" value="export" checked> 수출자 (달러를 받아요)</label>
+          <label class="radio"><input type="radio" name="simRole" value="import"> 수입자 (달러를 내요)</label>
+        </div>
+        <div class="field"><label>계약 금액 (USD)</label><input type="number" id="simUsd" value="50000" min="0" step="any"></div>
+        <div class="form-grid">
+          <div class="field"><label>계약 때 환율 (원/달러)</label><input type="number" id="simA" step="any"></div>
+          <div class="field"><label>결제 때 환율 (원/달러)</label><input type="number" id="simB" step="any"></div>
+        </div>
+        <div class="sim-result" id="simResult"></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:28px">
+      <h3>알아두기</h3>
+      <ul>
+        <li>원/달러 환율이 <b>오르면</b> (원화 약세) 달러로 받는 <b>수출자</b>는 원화로 더 많이 받고, 달러로 내야 하는 <b>수입자</b>는 부담이 커져요.</li>
+        <li>환율이 <b>내리면</b> (원화 강세) 반대가 돼요.</li>
+        <li>계약과 결제 사이가 길수록 환율 변동 위험이 커져서, 기업들은 선물환 같은 환헤지로 위험을 줄이기도 해요.</li>
+      </ul>
+    </div>
+  </div>
+
   {# ---------- 용어집 ---------- #}
   <div class="tab-panel" data-panel="terms">
     <div class="filter-bar" data-target="#termList">
@@ -145,6 +186,7 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="{{ url_for('static', filename='js/fx.js') }}"></script>
 <script>
   // 프로세스 단계를 누르면 오른쪽에 설명을 보여준다
   const PROCESS = {{ t.process | tojson }};

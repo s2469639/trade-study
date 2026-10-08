@@ -2,6 +2,10 @@
 {% from "_macros.html" import del_btn, char %}
 {% block title %}월드맵 · 무역공부노트{% endblock %}
 
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/fx.js') }}"></script>
+{% endblock %}
+
 {% block content %}
 <section class="home-hero">
   <h1>무역공부노트 월드맵</h1>
@@ -11,6 +15,12 @@
 
 <div class="card map-card">
   {% include "_map.html" %}
+</div>
+
+<div class="card fx-strip">
+  <div class="card-title-row"><h2>{{ ico('coins') }} 오늘의 환율</h2><a class="btn small white" href="{{ url_for('trade') }}#tab=fx">환율 계산기 →</a></div>
+  <div class="fx-board" id="fxBoard"><span class="note">불러오는 중...</span></div>
+  <p class="note" id="fxNote" style="margin:8px 0 0"></p>
 </div>
 
 <div class="grid cols-2" id="closet">
