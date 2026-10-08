@@ -1,0 +1,15 @@
+# Render 배포 설정 (Blueprint). Render 대시보드에서 이 레포를 연결하면 자동으로 읽어요.
+services:
+  - type: web
+    name: trade-study
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --workers 1 --threads 4
+    envVars:
+      - key: DEMO_MODE        # 방문자마다 기록이 따로 저장되는 체험판 모드
+        value: "1"
+      - key: PYTHON_VERSION
+        value: "3.12.3"
+      - key: EXCHANGE_API_KEY # 환율 키는 Render 대시보드에서 직접 입력 (코드에 넣지 않아요)
+        sync: false

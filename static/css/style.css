@@ -765,3 +765,5 @@ input[type=number]:focus { background: #FFFDF0; box-shadow: 0 0 0 4px #BFE0FB; }
 .map .island.fog .star { opacity: .55; }
 .map .island.fog .ripple { opacity: .8; animation: ripple 3.6s ease-in-out infinite; }
 .map .island.fog:hover .isle-shape .top, .map .island.fog:focus-visible .isle-shape .top { fill-opacity: .9; }
+
+.demo-badge { display: inline-block; margin-top: 4px; padding: 0 10px; border: 2px dashed var(--ink); border-radius: 999px; background: var(--yellow-soft); font-size: .85rem; color: var(--ink); }

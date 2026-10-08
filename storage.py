@@ -8,13 +8,37 @@
 """
 import json
 import os
+import shutil
+import time
 import uuid
 from datetime import datetime
 from pathlib import Path
 
+from flask import g, has_request_context
+
 BASE_DIR = Path(__file__).parent
 DATA_DIR = BASE_DIR / "data"
 USER_DIR = DATA_DIR / "user"
+
+
+def user_dir():
+    """기록을 저장할 폴더. 평소에는 data/user/ 이고, 데모 모드에서는 방문자마다 data/user/<방문자id>/ 로 나뉘어요."""
+    visitor = getattr(g, "visitor", None) if has_request_context() else None
+    return USER_DIR / visitor if visitor else USER_DIR
+
+
+def purge_visitors(max_dirs=300, max_age_days=3):
+    """데모 서버가 방문자 폴더로 가득 차지 않게, 오래된 폴더를 정리해요."""
+    if not USER_DIR.exists():
+        return
+    dirs = [d for d in USER_DIR.iterdir() if d.is_dir()]
+    now = time.time()
+    for d in dirs:
+        if now - d.stat().st_mtime > max_age_days * 86400:
+            shutil.rmtree(d, ignore_errors=True)
+    dirs = sorted((d for d in USER_DIR.iterdir() if d.is_dir()), key=lambda d: d.stat().st_mtime)
+    for d in dirs[: max(0, len(dirs) - max_dirs)]:
+        shutil.rmtree(d, ignore_errors=True)
 
 # 저장할 수 있는 기록 종류 (이 목록에 없는 이름은 거부)
 COLLECTIONS = [
@@ -57,7 +81,7 @@ def load_sample(name):
 
 
 def _path(col):
-    return USER_DIR / f"{col}.json"
+    return user_dir() / f"{col}.json"
 
 
 def read_all(col):
@@ -72,7 +96,7 @@ def read_all(col):
 
 
 def write_all(col, items):
-    USER_DIR.mkdir(parents=True, exist_ok=True)
+    user_dir().mkdir(parents=True, exist_ok=True)
     tmp = _path(col).with_suffix(".tmp")
     with open(tmp, "w", encoding="utf-8") as f:
         json.dump(items, f, ensure_ascii=False, indent=2)
@@ -110,7 +134,7 @@ def delete(col, item_id):
 
 def get_progress():
     """게임 진행 상황(섬 방문, 퀴즈 통과, 스토리 클리어 등)은 목록이 아니라 하나의 사전(dict)으로 저장."""
-    path = USER_DIR / "progress.json"
+    path = user_dir() / "progress.json"
     if not path.exists():
         return {}
     try:
@@ -122,11 +146,11 @@ def get_progress():
 
 
 def save_progress(data):
-    USER_DIR.mkdir(parents=True, exist_ok=True)
-    tmp = USER_DIR / "progress.tmp"
+    user_dir().mkdir(parents=True, exist_ok=True)
+    tmp = user_dir() / "progress.tmp"
     with open(tmp, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
-    os.replace(tmp, USER_DIR / "progress.json")
+    os.replace(tmp, user_dir() / "progress.json")
 
 
 def export_all():

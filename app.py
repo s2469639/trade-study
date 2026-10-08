@@ -4,7 +4,9 @@
 """
 import io
 import json
+import os
 import re
+import secrets
 from datetime import date, datetime
 
 from flask import Flask, g, jsonify, make_response, render_template, request, send_file, redirect, url_for
@@ -15,6 +17,11 @@ import rates
 import storage
 
 rates.load_env()   # .env 의 API 키를 읽어와요
+
+# 데모 모드 (배포용): 환경변수 DEMO_MODE=1 이면 방문자마다 기록이 따로 저장되고 서로 보이지 않아요.
+DEMO = os.environ.get("DEMO_MODE", "").lower() in ("1", "true", "yes")
+DEMO_MAX_ITEMS = 200       # 컬렉션 하나에 저장할 수 있는 개수
+DEMO_MAX_BYTES = 20000     # 기록 하나의 최대 크기
 
 app = Flask(__name__)
 
@@ -55,6 +62,26 @@ app.jinja_env.globals["player_hat"] = player_hat
 app.jinja_env.globals["player_items"] = player_items
 
 
+@app.before_request
+def demo_visitor():
+    """데모 모드: 쿠키의 방문자 id 로 기록 폴더를 나눠요 (id 는 추측할 수 없는 랜덤 값)."""
+    if not DEMO or request.path.startswith("/static"):
+        return
+    vid = request.cookies.get("vid", "")
+    g.new_visitor = not (len(vid) == 32 and all(c in "0123456789abcdef" for c in vid))
+    if g.new_visitor:
+        vid = secrets.token_hex(16)
+        storage.purge_visitors()
+    g.visitor = vid
+
+
+@app.after_request
+def demo_cookie(resp):
+    if getattr(g, "new_visitor", False):
+        resp.set_cookie("vid", g.visitor, max_age=60 * 60 * 24 * 3, httponly=True, samesite="Lax")
+    return resp
+
+
 @app.context_processor
 def inject_globals():
     status = game.compute_status(all_companies())
@@ -64,6 +91,7 @@ def inject_globals():
             "mentor": hats["mentor"]}                       # 이름과 모자 색은 옷장에서 바꾼 값을 써요
     return {
         "NAV": NAV,
+        "demo": DEMO,
         "today": date.today().strftime("%Y-%m-%d"),
         "industries_all": storage.load_sample("industries"),
         "me": status,
@@ -311,6 +339,8 @@ def api_add(col):
     if err:
         return err
     data = request.get_json(silent=True) or {}
+    if DEMO and (len(json.dumps(data, ensure_ascii=False)) > DEMO_MAX_BYTES or len(storage.read_all(col)) >= DEMO_MAX_ITEMS):
+        return jsonify(error="demo limit"), 413
     return jsonify(storage.add(col, data))
 
 
@@ -435,6 +465,8 @@ def export_data():
 
 @app.post("/import")
 def import_data():
+    if DEMO:
+        return redirect(url_for("log"))        # 데모에서는 불러오기를 막아요
     f = request.files.get("file")
     try:
         data = json.load(f)
