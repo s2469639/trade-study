@@ -526,3 +526,26 @@ label.radio { display: inline-flex; align-items: center; gap: 6px; font-size: 1r
 input[type=number] { width: 100%; font: inherit; color: var(--ink); background: #fff; border: 2.5px solid var(--ink); border-radius: var(--br-sm); padding: 9px 14px; outline: none; }
 input[type=number]:focus { background: #FFFDF0; box-shadow: 0 0 0 4px #BFE0FB; }
 @media (max-width: 760px) { .fx-strip .fx-board { grid-template-columns: repeat(2, minmax(0, 1fr)); } .fx-pair { grid-template-columns: 1fr; } }
+
+/* ---- 흔들림 줄이기 (눌렀을 때 그림이 심하게 흔들리던 문제 수정) ----
+   · 움직이는 그림(캐릭터, 배)에는 손그림 필터를 걸지 않아요. 필터가 걸린 채 움직이면 선이 출렁여요.
+   · 호버/클릭 때 회전과 확대 폭을 줄였어요. */
+.scene .char.hop { animation: hop .55s var(--ease); }
+@keyframes hop { 0% { transform: translateY(0); } 40% { transform: translateY(-14px); } 100% { transform: translateY(0); } }
+@keyframes talk { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@keyframes wiggle { 0%, 100% { transform: rotate(0); } 30% { transform: rotate(-6deg); } 70% { transform: rotate(5deg); } }
+@keyframes rock { from { transform: rotate(-1.5deg); } to { transform: rotate(1.5deg); } }
+.map .ship-bob { transform-box: fill-box; transform-origin: 50% 100%; }
+.map .isle-shape { transform-box: fill-box; transform-origin: center; transition: transform .35s var(--spring); }
+.map .isle-shape path { transform: none !important; }                   /* 필터가 걸린 도형 안쪽이 움직이면 선이 출렁여서 바깥 그룹을 움직여요 */
+.map .island:hover .isle-shape, .map .island:focus-visible .isle-shape { transform: scale(1.025); }
+.map .island:hover .map-ico, .map .town:hover .map-ico { transform: translateY(-4px) rotate(-3deg) scale(1.06); }
+.scene:hover .machine { transform: none; }
+.card.hoverable:hover { transform: translateY(-4px) rotate(-.3deg); }
+.btn:hover { transform: translateY(-3px) rotate(-.6deg); }
+.tab:hover { transform: translateY(-2px) rotate(-.8deg); }
+.chip:hover { transform: translateY(-2px) rotate(-1deg); }
+.pick:hover { transform: translateY(-3px) rotate(-.8deg); }
+.nav-link:hover { transform: translateX(4px); }
+.me-card:hover { transform: scale(1.02); }
+.closet-item:hover, .fx-tile:hover { transform: translateY(-3px); }

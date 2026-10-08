@@ -49,9 +49,9 @@
 {% macro char(x, hat, flip=false, cls='', who='', items=[], y=52) -%}
   <g transform="translate({{ x }},{{ y }})">
    <g class="char {{ cls }}" {% if who %}data-who="{{ who }}"{% endif %}>
-    <g {% if flip %}transform="translate(100,0) scale(-1,1)"{% endif %} style="filter:url(#wobble3)">
-      <path class="stroke" d="M50 68 L50 100 M50 80 L34 96 M50 80 L66 96 M50 100 L40 138 M50 100 L60 138 M40 138 L31 138 M60 138 L69 138"/>
-      <path class="skin" style="fill:{{ hat }}" d="M33 30 L39 6 L63 6 L68 30 Z"/>
+    <g {% if flip %}transform="translate(100,0) scale(-1,1)"{% endif %}>
+      <path class="stroke" d="M50 68 C49 77, 51 91, 50 100 M50 80 C45 85, 39 91, 34 96 M50 80 C56 85, 62 90, 66 96 M50 100 C46 112, 43 126, 40 138 M50 100 C54 112, 58 126, 60 138 M40 138 C37 137, 34 138, 31 138 M60 138 C63 139, 66 138, 69 138"/>
+      <path class="skin" style="fill:{{ hat }}" d="M33 30 C35 22 37 13 39 6 C47 5 55 7 63 6 C65 14 67 22 68 30 C56 31 44 29 33 30 Z"/>
       {# --- 모자 장식 (자리별로 하나씩) --- #}
       {% if 'gold' in items %}<path class="skin" style="fill:#FFC13B" d="M35 22 L66 22 L67.5 29 L34 29 Z"/>
       {% elif 'ribbon' in items %}<path class="skin" style="fill:#FF8787" d="M36 23 L65 23 L66.5 29 L34.5 29 Z"/><path class="skin" style="fill:#FF8787" d="M51 26 L44 19 L44 33 Z M51 26 L58 19 L58 33 Z"/>{% endif %}
@@ -61,7 +61,7 @@
       {% elif 'flag' in items %}<path class="stroke" style="stroke-width:3" d="M51 6 V-16"/><path class="skin" style="fill:#4DABF7;stroke-width:3" d="M51 -16 L68 -11 L51 -5 Z"/>
       {% elif 'prop' in items %}<path class="stroke" style="stroke-width:3" d="M51 6 V-1"/><g class="prop"><path class="skin" style="fill:#FF8787;stroke-width:2.8" d="M51 -1 C 40 -9, 36 -1, 51 -1 Z M51 -1 C 62 7, 66 -1, 51 -1 Z"/></g>
       {% elif 'flower' in items %}<path class="stroke" style="stroke-width:3" d="M51 6 V-2"/><g style="stroke-width:2.6" class="stroke"><circle cx="45" cy="-5" r="4" fill="#FFF"/><circle cx="57" cy="-5" r="4" fill="#fff"/><circle cx="51" cy="-12" r="4" fill="#fff"/><circle cx="51" cy="-3" r="4" fill="#fff"/><circle cx="51" cy="-6" r="3.4" fill="#FFD43B"/></g>{% endif %}
-      <circle class="skin" cx="50" cy="48" r="20"/>
+      <path class="skin" d="M50 28 C61 27.5 70.5 36 70 48.5 C69.5 60 60 68.5 49.5 68 C38.5 67.5 29.5 58.5 30 47.5 C30.5 36.5 39 28.5 50 28 Z"/>
       <g class="eyes-wrap"><g class="eyes"><circle class="eye" cx="52" cy="50" r="3.2"/><circle class="eye" cx="63" cy="50" r="3.2"/></g></g>
       {% if 'shades' in items %}<path class="skin" style="fill:#222;stroke-width:2.6" d="M45 45 H58 V53 Q58 56 55 56 H48 Q45 56 45 53 Z M60 45 H72 V53 Q72 56 69 56 H63 Q60 56 60 53 Z"/><path class="stroke" style="stroke-width:2.6" d="M58 48 H60"/>{% endif %}
     </g>
