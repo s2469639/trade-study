@@ -4,20 +4,20 @@
 
 {% block content %}
 <div class="page-head">
-  <h1>🚢 무역 공부</h1>
+  <h1>{{ ico('ship') }} 무역 학원</h1>
   <p>수출입이 어떻게 흘러가는지, 서류와 용어까지 한 번에 정리해요.</p>
-  {{ scene('수출', '수입', '수출자', '수입자') }}
+  {{ scene('무역', '학원', '삐약이', '파도 선배') }}
 </div>
 
 <div class="tab-group">
   <div class="tabs" data-tabs="tab">
-    <button class="tab" data-tab="process">🧭 프로세스</button>
-    <button class="tab" data-tab="docs">📄 무역서류</button>
-    <button class="tab" data-tab="payment">💰 결제</button>
-    <button class="tab" data-tab="transport">🚛 운송</button>
-    <button class="tab" data-tab="customs">🛃 통관</button>
-    <button class="tab" data-tab="terms">🔤 용어집</button>
-    <button class="tab" data-tab="cases">🔍 사례</button>
+    <button class="tab" data-tab="process">{{ ico('compass') }} 프로세스</button>
+    <button class="tab" data-tab="docs">{{ ico('doc') }} 무역서류</button>
+    <button class="tab" data-tab="payment">{{ ico('coins') }} 결제</button>
+    <button class="tab" data-tab="transport">{{ ico('truck') }} 운송</button>
+    <button class="tab" data-tab="customs">{{ ico('shield') }} 통관</button>
+    <button class="tab" data-tab="terms">{{ ico('abc') }} 용어집</button>
+    <button class="tab" data-tab="cases">{{ ico('search') }} 사례</button>
   </div>
 
   {# ---------- 프로세스 ---------- #}
@@ -37,11 +37,11 @@
         <div class="card sky" id="processDetail">
           <h2 id="pdTitle"></h2>
           <p id="pdDesc"></p>
-          <h3>📎 관련 서류</h3>
+          <h3>{{ ico('doc') }} 관련 서류</h3>
           <div id="pdDocs" class="row"></div>
         </div>
         <div class="card">
-          <h3>📥 수입은 이렇게 흘러가요</h3>
+          <h3>{{ ico('download') }} 수입은 이렇게 흘러가요</h3>
           <ol class="steps" style="margin-top:12px">
             {% for s in t.import_flow %}<li>{{ s }}</li>{% endfor %}
           </ol>
@@ -70,7 +70,7 @@
         <div class="card hoverable">
           <h2>{{ p.name }}</h2>
           <p>{{ p.desc }}</p>
-          <div class="quote-box"><b>⚠️ 위험 포인트</b><br>{{ p.risk }}</div>
+          <div class="quote-box"><b>{{ ico('warning') }} 위험 포인트</b><br>{{ p.risk }}</div>
         </div>
       {% endfor %}
     </div>
@@ -83,7 +83,7 @@
         <div class="card hoverable">
           <h2>{{ p.name }}</h2>
           <p>{{ p.desc }}</p>
-          <span class="sticky-note">💡 {{ p.tip }}</span>
+          <span class="sticky-note">{{ ico('bulb') }} {{ p.tip }}</span>
         </div>
       {% endfor %}
     </div>
@@ -92,11 +92,11 @@
   {# ---------- 통관 ---------- #}
   <div class="tab-panel" data-panel="customs">
     <div class="grid cols-2">
-      <div class="card"><h2>📤 수출통관</h2><ol class="steps">{% for s in t.customs.export %}<li>{{ s }}</li>{% endfor %}</ol></div>
-      <div class="card"><h2>📥 수입통관</h2><ol class="steps">{% for s in t.customs.import %}<li>{{ s }}</li>{% endfor %}</ol></div>
+      <div class="card"><h2>{{ ico('upload') }} 수출통관</h2><ol class="steps">{% for s in t.customs.export %}<li>{{ s }}</li>{% endfor %}</ol></div>
+      <div class="card"><h2>{{ ico('download') }} 수입통관</h2><ol class="steps">{% for s in t.customs.import %}<li>{{ s }}</li>{% endfor %}</ol></div>
     </div>
     <div class="card yellow" style="margin-top:22px">
-      <h3>⭐ 꼭 기억할 포인트</h3>
+      <h3>{{ ico('star') }} 꼭 기억할 포인트</h3>
       <ul>{% for p in t.customs.points %}<li>{{ p }}</li>{% endfor %}</ul>
     </div>
   </div>
@@ -104,7 +104,7 @@
   {# ---------- 용어집 ---------- #}
   <div class="tab-panel" data-panel="terms">
     <div class="filter-bar" data-target="#termList">
-      <input class="search" type="text" data-target="#termList" placeholder="🔍 용어 검색">
+      <input class="search" type="text" data-target="#termList" placeholder="{{ ico('search') }} 용어 검색">
       <button class="chip active" data-key="category" data-value="">전체</button>
       {% for c in ['인도조건','결제','서류','운송','통관','기타'] %}
         <button class="chip" data-key="category" data-value="{{ c }}">{{ c }}</button>
@@ -118,7 +118,7 @@
           <div class="term-head"><b>{{ term.term }}</b><span class="tag">{{ term.category }}</span></div>
           <div class="muted small">{{ term.ko }}</div>
           <div>{{ term.desc }}</div>
-          <button type="button" class="btn small white check" data-term="{{ term.id }}">{{ '✅ 외웠어요!' if term.id in known else '☐ 아직 헷갈려요' }}</button>
+          <button type="button" class="btn small white check" data-term="{{ term.id }}">{{ '외웠어요!' if term.id in known else '아직 헷갈려요' }}</button>
         </div>
       {% endfor %}
     </div>

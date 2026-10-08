@@ -1,0 +1,53 @@
+{# 월드맵: 섬(산업)과 본토 마을(나머지 메뉴). 누르면 삐약이가 배를 타고 이동해요. #}
+{% from "_macros.html" import char %}
+{% set geo = {
+  'semi':    {'d': 'M85 185 C75 135 125 88 190 98 C262 88 305 140 292 188 C300 232 240 252 188 247 C128 256 92 232 85 185 Z', 'cx': 190, 'cy': 170, 'dx': 190, 'dy': 268, 'fill': '#FFF1B8'},
+  'battery': {'d': 'M375 135 C368 92 420 52 480 62 C545 55 585 98 572 140 C582 182 525 202 470 198 C415 205 380 178 375 135 Z', 'cx': 475, 'cy': 124, 'dx': 475, 'dy': 222, 'fill': '#DDF3E3'},
+  'auto':    {'d': 'M630 220 C622 172 670 132 735 142 C800 134 842 182 828 228 C838 272 780 292 728 288 C672 296 636 268 630 220 Z', 'cx': 730, 'cy': 212, 'dx': 730, 'dy': 312, 'fill': '#D9EDFD'}
+} %}
+{% set spots = [
+  ('story', 'ship', '무역 항구', 90), ('trade', 'book', '무역 학원', 240), ('news', 'news', '신문사', 390),
+  ('writing', 'pencil', '글쓰기 도서관', 540), ('interview', 'mic', '면접 회관', 690), ('log', 'notebook', '나의 일지', 830)
+] %}
+<svg class="map" id="worldMap" viewBox="0 0 900 600" role="img" aria-label="월드맵">
+  <g class="waves" aria-hidden="true">
+    {% for wx, wy in [(40,60),(330,40),(620,50),(780,110),(60,230),(330,260),(560,300),(850,320),(420,350),(150,380),(640,400),(280,430),(800,430),(30,420)] %}
+      <path class="wave" style="animation-delay:-{{ (loop.index * 0.7) % 5 }}s" d="M{{ wx }} {{ wy }} q7 -8 14 0 t14 0 t14 0"/>
+    {% endfor %}
+  </g>
+
+  {# 섬 #}
+  {% for isl in islands %}
+    {% set gm = geo[isl.id] %}
+    {% set sts = me.stamps[isl.id] %}
+    {% set got = sts | selectattr('done') | list | length %}
+    <a class="spot island" href="{{ url_for('industry', id=isl.id) }}" data-key="{{ isl.id }}" data-x="{{ gm.dx }}" data-y="{{ gm.dy }}">
+      <title>{{ isl.name }}섬 · 스탬프 {{ got }}/5</title>
+      <g class="isle-shape" style="filter:url(#wobble2)"><path d="{{ gm.d }}" style="fill:{{ gm.fill }}"/></g>
+      <use class="ico map-ico" href="#i-{{ isl.icon }}" x="{{ gm.cx - 31 }}" y="{{ gm.cy - 58 }}" width="62" height="62"/>
+      <text class="isle-name" x="{{ gm.cx }}" y="{{ gm.cy + 38 }}">{{ isl.name }}섬</text>
+      {% for st in sts %}
+        <use class="ico star {{ '' if st.done else 'empty' }}" href="#i-star" x="{{ gm.cx - 55 + loop.index0 * 22 }}" y="{{ gm.cy + 48 }}" width="22" height="22"/>
+      {% endfor %}
+    </a>
+  {% endfor %}
+
+  {# 본토 #}
+  <g style="filter:url(#wobble)"><path class="land" d="M-6 478 C 140 458, 290 486, 450 470 S 760 462, 906 478 V606 H-6 Z"/></g>
+  {% for key, icon, label, cx in spots %}
+    <a class="spot town" href="{{ url_for(key) }}" data-key="{{ key }}" data-x="{{ cx }}" data-y="446">
+      <title>{{ label }}</title>
+      <use class="ico map-ico" href="#i-{{ icon }}" x="{{ cx - 29 }}" y="490" width="58" height="58"/>
+      <text class="town-name" x="{{ cx }}" y="578">{{ label }}</text>
+    </a>
+  {% endfor %}
+
+  {# 삐약이의 배 #}
+  <g id="ship" class="ship" style="transform:translate(90px,446px)">
+    <g class="ship-bob">
+      <path class="hull" d="M-36 -4 H36 L26 14 H-26 Z"/>
+      <path class="sail" d="M24 -4 V-36 L38 -10 Z"/>
+      <g transform="translate(-16,-48) scale(.32)">{{ char(0, cast.player.hat, false, '', '', me.equipped, 0) }}</g>
+    </g>
+  </g>
+</svg>

@@ -7,31 +7,55 @@ import json
 import re
 from datetime import date, datetime
 
-from flask import Flask, jsonify, render_template, request, send_file, redirect, url_for
+from flask import Flask, g, jsonify, render_template, request, send_file, redirect, url_for
+from markupsafe import Markup
 
+import game
 import storage
 
 app = Flask(__name__)
 
-# 사이드바 메뉴: (함수이름, 이모지, 이름)
+# 사이드바 메뉴: (함수이름, 아이콘 이름, 이름)  — 아이콘은 templates/_icons.html 에 있어요
 NAV = [
-    ("home", "🏠", "홈"),
-    ("industry", "🏭", "산업 공부"),
-    ("company", "🏢", "기업 공부"),
-    ("trade", "🚢", "무역 공부"),
-    ("news", "📰", "뉴스 & 시사"),
-    ("writing", "✍️", "글쓰기"),
-    ("interview", "🎤", "해외영업 연결"),
-    ("log", "📒", "나의 기록"),
+    ("home", "map", "월드맵"),
+    ("industry", "factory", "산업 섬"),
+    ("company", "building", "기업 항구"),
+    ("story", "ship", "무역 항구 이야기"),
+    ("trade", "book", "무역 학원"),
+    ("news", "news", "신문사"),
+    ("writing", "pencil", "글쓰기 도서관"),
+    ("interview", "mic", "면접 회관"),
+    ("log", "notebook", "나의 일지"),
 ]
+
+
+def ico(name, cls=""):
+    """손그림 아이콘 하나를 그려주는 함수. 템플릿에서 {{ ico('map') }} 처럼 써요."""
+    return Markup(f'<svg class="ico {cls}" aria-hidden="true"><use href="#i-{name}"/></svg>')
+
+
+def player_items():
+    """지금 삐약이가 쓰고 있는 모자 장식 목록 (캐릭터 그림에서 사용)."""
+    status = getattr(g, "status", None)
+    return status["equipped"] if status else []
+
+
+app.jinja_env.globals["ico"] = ico
+app.jinja_env.globals["player_items"] = player_items
 
 
 @app.context_processor
 def inject_globals():
+    status = game.compute_status(all_companies())
+    g.status = status
+    hats = storage.load_sample("hats")
     return {
         "NAV": NAV,
         "today": date.today().strftime("%Y-%m-%d"),
         "industries_all": storage.load_sample("industries"),
+        "me": status,
+        "cast": hats,
+        "celebrate": game.celebrate(status),
     }
 
 
@@ -96,8 +120,8 @@ def home():
         "terms_total": len(terms),
     }
     hour = datetime.now().hour
-    greeting = ("좋은 아침이에요 ☀️" if 5 <= hour < 12 else "점심 먹고 한 페이지 📖" if 12 <= hour < 18
-                else "오늘 하루도 수고했어요 🌙" if 18 <= hour < 24 else "늦은 밤, 한 줄만 더 🦉")
+    greeting = ("좋은 아침이에요" if 5 <= hour < 12 else "점심 먹고 한 페이지" if 12 <= hour < 18
+                else "오늘 하루도 수고했어요" if 18 <= hour < 24 else "늦은 밤, 한 줄만 더")
     days = set()
     for col in ("logs", "news", "writings", "notes", "explains", "answers"):
         days.update(i.get("date") for i in storage.read_all(col) if i.get("date"))
@@ -110,6 +134,8 @@ def home():
         unknowns=unknowns[:6],
         recent_logs=newest_first(storage.read_all("logs"))[:5],
         stats=stats,
+        quests=game.daily_quests(),
+        islands=storage.load_sample("industries"),
     )
 
 
@@ -122,8 +148,36 @@ def industry():
     notes = newest_first([n for n in storage.read_all("notes")
                           if n.get("target_type") == "industry" and n.get("target_id") == selected["id"]])
     news = newest_first([n for n in storage.read_all("news") if n.get("industry") == selected["id"]])
+    progress = game.get_progress()
+    if selected["id"] not in progress["visited"]:       # 섬에 처음 상륙하면 스탬프 1개
+        progress["visited"].append(selected["id"])
+        storage.save_progress(progress)
+    stamps = game.island_stamps(selected["id"], all_companies(), progress)
     return render_template("industry.html", industries=industries, ind=selected,
-                           companies=companies, notes=notes, news=news)
+                           companies=companies, notes=notes, news=news, stamps=stamps,
+                           quiz=storage.load_sample("quiz").get(selected["id"], []),
+                           quiz_passed=bool(progress["quiz"].get(selected["id"])))
+
+
+@app.route("/story")
+def story():
+    chapters = storage.load_sample("story")
+    done = game.get_progress()["chapters"]
+    return render_template("story.html", chapters=chapters, done=done)
+
+
+@app.route("/story/<chapter_id>")
+def story_play(chapter_id):
+    chapters = storage.load_sample("story")
+    chapter = next((c for c in chapters if c["id"] == chapter_id), None)
+    if not chapter:
+        return redirect(url_for("story"))
+    idx = chapters.index(chapter)
+    done = game.get_progress()["chapters"]
+    if idx > 0 and chapters[idx - 1]["id"] not in done:   # 앞 챕터를 깨야 열려요
+        return redirect(url_for("story"))
+    return render_template("story_play.html", ch=chapter, next_ch=chapters[idx + 1] if idx + 1 < len(chapters) else None,
+                           best=done.get(chapter_id))
 
 
 @app.route("/company")
@@ -270,6 +324,29 @@ def api_term_toggle(term_id):
         return jsonify(known=False)
     storage.add("known_terms", {"term_id": term_id})
     return jsonify(known=True)
+
+
+# ---------------------------------------------------------------- 게임 진행 저장 API
+@app.post("/api/progress/quiz")
+def api_progress_quiz():
+    data = request.get_json(silent=True) or {}
+    progress = game.get_progress()
+    if data.get("passed") and data.get("id"):
+        progress["quiz"][data["id"]] = True
+        storage.save_progress(progress)
+    return jsonify(ok=True)
+
+
+@app.post("/api/progress/chapter")
+def api_progress_chapter():
+    data = request.get_json(silent=True) or {}
+    progress = game.get_progress()
+    cid, stars = data.get("id"), max(1, min(3, int(data.get("stars", 1))))
+    if cid:
+        prev = progress["chapters"].get(cid, {}).get("stars", 0)
+        progress["chapters"][cid] = {"stars": max(prev, stars), "date": date.today().strftime("%Y-%m-%d")}
+        storage.save_progress(progress)
+    return jsonify(ok=True)
 
 
 # ---------------------------------------------------------------- 백업

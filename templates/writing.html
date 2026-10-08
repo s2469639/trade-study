@@ -4,16 +4,16 @@
 
 {% block content %}
 <div class="page-head">
-  <h1>✍️ 글쓰기 공부</h1>
+  <h1>{{ ico('pencil') }} 글쓰기 도서관</h1>
   <p>잘 쓴 글을 뜯어보고, 내 생각을 써보고, 좋은 표현은 모아둬요.</p>
-  {{ scene('글쓰기', '연습', '나', '독자') }}
+  {{ scene('글쓰기', '도서관', '삐약이', '파도 선배') }}
 </div>
 
 <div class="tab-group">
   <div class="tabs" data-tabs="tab">
-    <button class="tab" data-tab="read">📖 사설·칼럼 읽기</button>
-    <button class="tab" data-tab="write">🖊️ 내 글 쓰기</button>
-    <button class="tab" data-tab="phrases">⭐ 표현·논리 노트</button>
+    <button class="tab" data-tab="read">{{ ico('book') }} 사설·칼럼 읽기</button>
+    <button class="tab" data-tab="write">{{ ico('pencil') }} 내 글 쓰기</button>
+    <button class="tab" data-tab="phrases">{{ ico('star') }} 표현·논리 노트</button>
   </div>
 
   {# ---------- 사설 읽기 ---------- #}
@@ -67,18 +67,18 @@
 
       <div>
         <div class="card sky">
-          <h3>✅ 셀프 피드백 체크리스트</h3>
+          <h3>{{ ico('check') }} 셀프 피드백 체크리스트</h3>
           {% for c in w.checklist %}
             <div class="row" style="flex-wrap:nowrap; margin-bottom:6px"><input type="checkbox" id="ck{{ loop.index }}"><label for="ck{{ loop.index }}" style="margin:0; font-family:var(--font-body); font-size:1rem">{{ c }}</label></div>
           {% endfor %}
         </div>
         <div class="card yellow">
-          <h3>🧱 논리 구조 틀</h3>
+          <h3>{{ ico('building') }} 논리 구조 틀</h3>
           {% for s in w.structures %}
             <div style="margin-bottom:12px">
               <b class="label-font" style="font-size:1.2rem">{{ s.name }}</b>
               <div>{% for st in s.steps %}<span class="tag white">{{ st }}</span> {% endfor %}</div>
-              <div class="muted small">💡 {{ s.tip }}</div>
+              <div class="muted small">{{ ico('bulb') }} {{ s.tip }}</div>
             </div>
           {% endfor %}
         </div>
@@ -109,7 +109,7 @@
             <select name="type"><option>좋은 표현</option><option>논리 구조</option><option>첫 문장</option><option>마무리 문장</option></select>
           </div>
           <div class="field"><label>출처 / 메모</label><input type="text" name="source"></div>
-          <button class="btn" type="submit">표현 저장 ⭐</button>
+          <button class="btn" type="submit">표현 저장 {{ ico('star') }}</button>
         </form>
       </div>
       <div>
@@ -122,7 +122,7 @@
             {{ del_btn('phrases', p.id) }}
           </div>
         {% else %}
-          <div class="empty">좋은 표현을 모아두면 글쓰기 때 꺼내 쓸 수 있어요 ⭐</div>
+          <div class="empty">좋은 표현을 모아두면 글쓰기 때 꺼내 쓸 수 있어요 {{ ico('star') }}</div>
         {% endfor %}
       </div>
     </div>

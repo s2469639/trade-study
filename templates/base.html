@@ -13,20 +13,30 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
+{% from "_macros.html" import char %}
   <!-- 손으로 그은 듯 선을 살짝 일렁이게 하는 필터 (카드/버튼 테두리, 캐릭터에 사용) -->
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
     <filter id="wobble"  x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.03"  numOctaves="2" seed="3"  result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="4"/></filter>
     <filter id="wobble2" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.025" numOctaves="2" seed="11" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="4.5"/></filter>
     <filter id="wobble3" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.04"  numOctaves="2" seed="27" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3"/></filter>
   </svg>
+  {% include "_icons.html" %}
   <aside class="sidebar">
-    <a class="logo" href="{{ url_for('home') }}"><span>무역공부노트</span><small>해외영업 가는 길 ✈️</small></a>
-    {% for endpoint, emoji, label in NAV %}
-      <a class="nav-link {{ 'active' if request.endpoint == endpoint }}" href="{{ url_for(endpoint) }}">
-        <span class="nav-emoji">{{ emoji }}</span>{{ label }}
+    <a class="logo" href="{{ url_for('home') }}"><span>무역공부노트</span><small>해외영업 가는 길</small></a>
+    {% for endpoint, icon, label in NAV %}
+      <a class="nav-link {{ 'active' if request.endpoint == endpoint or (endpoint == 'story' and request.endpoint == 'story_play') }}" href="{{ url_for(endpoint) }}">
+        <span class="nav-emoji">{{ ico(icon) }}</span>{{ label }}
       </a>
     {% endfor %}
-    <div class="sidebar-foot">{{ today }}<br>오늘도 한 줄만 더! ✏️</div>
+    <a class="me-card" href="{{ url_for('home') }}#closet" title="내 모자 상자 보기">
+      <svg class="me-mini" viewBox="8 -24 84 170" aria-hidden="true">{{ char(0, cast.player.hat, false, '', '', me.equipped, 0) }}</svg>
+      <div class="me-info">
+        <b>{{ cast.player.name }}</b>
+        <span class="note">Lv.{{ me.level }} · {{ me.xp }}xp</span>
+        <span class="xp-bar"><i style="width:{{ me.pct }}%"></i></span>
+      </div>
+    </a>
+    <div class="sidebar-foot">{{ today }}</div>
   </aside>
 
   <main class="main">
@@ -34,6 +44,8 @@
   </main>
 
   <div id="toast"></div>
+  <div id="celebrate" class="celebrate" hidden></div>
+  <script>window.CELEBRATE = {{ celebrate | tojson }};</script>
   <script src="{{ url_for('static', filename='js/app.js') }}"></script>
   {% block scripts %}{% endblock %}
 </body>

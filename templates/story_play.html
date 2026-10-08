@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% from "_macros.html" import char %}
+{% block title %}{{ ch.title }} · 무역 항구 이야기{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <p class="note" style="margin:0 auto 4px">챕터 {{ ch.no }} · {{ ch.place }}</p>
+  <h1>{{ ch.title }}</h1>
+  {% if best %}<p class="note">지금까지 최고 기록: 별 {{ best.stars }}개</p>{% endif %}
+</div>
+
+<div class="card stage-card">
+  <svg class="scene stage" viewBox="0 0 620 220" role="img" aria-label="장면">
+    <path class="stroke" style="filter:url(#wobble2)" d="M8 196 C 120 192, 250 200, 360 196 S 540 193, 612 196"/>
+    <text class="anno" x="80" y="42">{{ cast.player.name }}</text>
+    <text class="anno" x="300" y="42">{{ cast.mentor.name }}</text>
+    <text class="anno" x="530" y="42">{{ ch.buyer.name }}</text>
+    {{ char(30, cast.player.hat, false, '', 'bbiyak', player_items(), 58) }}
+    {{ char(250, cast.mentor.hat, true, 'right', 'pado', [], 58) }}
+    {{ char(480, ch.buyer.hat, true, 'right', 'buyer', [], 58) }}
+  </svg>
+
+  <div class="dialog" id="dialog">
+    <div class="who-tag" id="who"></div>
+    <p class="line" id="line"></p>
+    <div class="choices" id="choices"></div>
+    <div class="feedback" id="feedback" hidden></div>
+    <div class="dialog-foot">
+      <span class="note" id="progressText"></span>
+      <button class="btn" id="nextBtn" type="button">다음</button>
+    </div>
+  </div>
+</div>
+
+<div class="card yellow end-card" id="endCard" hidden>
+  <h2>{{ ico('trophy') }} 챕터 클리어!</h2>
+  <div class="ch-stars big" id="endStars"></div>
+  <ul id="endSummary"></ul>
+  <div class="row">
+    {% if next_ch %}<a class="btn" href="{{ url_for('story_play', chapter_id=next_ch.id) }}">다음 챕터: {{ next_ch.title }}</a>{% endif %}
+    <a class="btn white" href="{{ url_for('story') }}">이야기 목록</a>
+    <a class="btn white" href="{{ url_for('home') }}">월드맵으로</a>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const CHAPTER = {{ ch | tojson }};
+  const NAMES = {bbiyak: {{ cast.player.name | tojson }}, pado: {{ cast.mentor.name | tojson }}, buyer: {{ ch.buyer.name | tojson }}};
+  const HATS = {bbiyak: {{ cast.player.hat | tojson }}, pado: {{ cast.mentor.hat | tojson }}, buyer: {{ ch.buyer.hat | tojson }}};
+</script>
+<script src="{{ url_for('static', filename='js/story.js') }}"></script>
+{% endblock %}
