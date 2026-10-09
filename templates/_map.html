@@ -72,7 +72,8 @@
     {% for key, icon, label, cx in towns %}
       <a class="spot town" href="{{ url_for(key) }}" data-key="{{ key }}" data-x="{{ cx }}" data-y="552" data-name="{{ label }}" data-tag="">
         <title>{{ label }}</title>
-        <use class="ico map-ico" href="#i-{{ icon }}" x="{{ cx - 30 }}" y="598" width="60" height="60"/>
+        <rect class="hit" x="{{ cx - 56 }}" y="590" width="112" height="118"/>
+        <g class="bob"><use class="ico map-ico" href="#i-{{ icon }}" x="{{ cx - 30 }}" y="598" width="60" height="60"/></g>
         <text class="town-name" x="{{ cx }}" y="700">{{ label }}</text>
       </a>
     {% endfor %}

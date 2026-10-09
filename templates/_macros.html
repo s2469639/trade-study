@@ -81,12 +81,52 @@
 {% macro scene(l1, l2='', you='삐약이', other='파도 선배') -%}
 <svg class="scene" viewBox="0 0 620 210" role="img" aria-label="{{ l1 }} {{ l2 }}">
   <path class="stroke" style="filter:url(#wobble2)" d="M8 190 C 120 186, 250 194, 360 190 S 540 187, 612 190"/>
-  <g class="machine" style="filter:url(#wobble)">
-    <path class="box" d="M222 190 L222 46 Q222 38 230 38 L390 38 Q398 38 398 46 L398 190 Z"/>
-    <path class="box" d="M222 190 C 212 190, 206 184, 203 176 L 222 176 M398 190 C 408 190, 414 184, 417 176 L 398 176"/>
+  <g class="prop-art" style="filter:url(#wobble)">
+  {% if l1 == '산업' %}
+    <path class="pf y" d="M240 190 V104 H300 V130 L340 104 V130 L380 104 V190 Z"/>
+    <path class="pf b" d="M262 190 V150 H290 V190 Z"/>
+    <path class="pf" d="M312 160 H328 V176 H312 Z M350 160 H366 V176 H350 Z"/>
+    <path class="pf w" d="M256 104 V58 H280 V104 Z"/>
+    <path class="stroke smoke" d="M268 48 q-10 -10 0 -18 t0 -18"/>
+  {% elif l1 == '기업' %}
+    <path class="pf b" d="M236 190 V70 H304 V190 Z"/>
+    <path class="pf y" d="M304 190 V108 H382 V190 Z"/>
+    <path class="pf" d="M250 86 h12 v12 h-12 z M278 86 h12 v12 h-12 z M250 118 h12 v12 h-12 z M278 118 h12 v12 h-12 z M320 124 h14 v14 h-14 z M352 124 h14 v14 h-14 z"/>
+    <path class="pf w" d="M326 190 V160 H356 V190 Z"/>
+    <path class="stroke" d="M270 70 V40 H330 M330 40 V62"/>
+  {% elif l1 == '신문사' %}
+    <path class="pf w" d="M236 186 V52 H384 V186 Z"/>
+    <path class="pf y" d="M250 66 H370 V92 H250 Z"/>
+    <path class="pf b" d="M250 106 H300 V146 H250 Z"/>
+    <path class="stroke" d="M312 112 H370 M312 126 H370 M312 140 H352 M250 160 H370 M250 172 H340"/>
+  {% elif l1 == '글쓰기' %}
+    <path class="pf y" d="M232 190 V70 H268 V190 Z"/>
+    <path class="pf b" d="M268 190 V90 H300 V190 Z"/>
+    <path class="pf w" d="M300 190 V60 H332 V190 Z"/>
+    <path class="pf" d="M332 190 L346 80 L378 86 L364 190 Z"/>
+    <path class="stroke" d="M240 100 H260 M308 90 H324 M240 150 H260"/>
+  {% elif l1 == '면접' %}
+    <path class="pf y" d="M228 190 V132 H392 V190 Z"/>
+    <path class="pf b" d="M262 132 V92 H358 V132 Z"/>
+    <path class="pf w" d="M296 92 v-38 q0 -14 14 -14 q14 0 14 14 v38"/>
+    <path class="stroke" d="M310 40 V28 M296 28 H324"/>
+  {% elif l1 == '나의' %}
+    <path class="pf y" d="M244 188 V44 Q244 38 250 38 H372 Q378 38 378 44 V188 Z"/>
+    <path class="pf w" d="M262 188 V52 H378 V188 Z"/>
+    <path class="stroke" d="M280 78 H356 M280 98 H356 M280 118 H340 M280 138 H350"/>
+    <path class="pf b" d="M258 38 V84 L270 74 L282 84 V38 Z"/>
+  {% elif l2 == '학원' %}
+    <path class="pf" style="fill:#2f5f4f" d="M230 176 V50 H390 V176 Z"/>
+    <path class="stroke chalk" d="M252 78 H340 M252 98 H312 M252 148 q18 -26 36 0 t36 0 M350 120 L366 104 L350 88"/>
+    <path class="pf y" d="M240 176 H380 V190 H240 Z"/>
+  {% else %}
+    <path class="pf b" d="M232 150 H388 L366 190 H254 Z"/>
+    <path class="stroke" d="M310 150 V50"/>
+    <path class="pf y" d="M316 56 V140 H372 Z"/>
+    <path class="pf w" d="M304 66 V140 H256 Z"/>
+    <path class="stroke" d="M310 50 L330 44 L310 38"/>
+  {% endif %}
   </g>
-  <text class="label" x="310" y="102">{{ l1 }}</text>
-  {% if l2 %}<text class="label" x="310" y="138">{{ l2 }}</text>{% endif %}
   <text class="anno" x="52" y="44">{{ you }}</text>
   <path class="arrow" d="M70 52 L82 63 M82 63 L81 55 M82 63 L74 62"/>
   <text class="anno" x="570" y="44">{{ other }}</text>

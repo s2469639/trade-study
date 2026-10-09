@@ -767,3 +767,15 @@ input[type=number]:focus { background: #FFFDF0; box-shadow: 0 0 0 4px #BFE0FB; }
 .map .island.fog:hover .isle-shape .top, .map .island.fog:focus-visible .isle-shape .top { fill-opacity: .9; }
 
 .demo-badge { display: inline-block; margin-top: 4px; padding: 0 10px; border: 2px dashed var(--ink); border-radius: 999px; background: var(--yellow-soft); font-size: .85rem; color: var(--ink); }
+
+/* 페이지별 장면 소품 */
+.scene .pf { fill: #fff; stroke: var(--ink); stroke-width: 4; stroke-linejoin: round; stroke-linecap: round; }
+.scene .pf.y { fill: #FFD43B; } .scene .pf.b { fill: #A5D8FF; } .scene .pf.w { fill: #fff; }
+.scene .chalk { stroke: #fff; stroke-width: 3.4; }
+.scene .smoke { stroke: var(--gray); stroke-width: 3; animation: smokeUp 2.6s ease-in-out infinite; }
+@keyframes smokeUp { 0%,100% { opacity: .3; transform: translateY(2px); } 50% { opacity: 1; transform: translateY(-4px); } }
+
+.map .town .map-ico, .map .island .map-ico { transition: none; transform: none !important; }
+.map .town .hit { fill: transparent; pointer-events: all; }
+.map .town .bob { transform-box: fill-box; transform-origin: center bottom; transition: transform .25s ease-out; }
+.map .town:hover .bob { transform: translateY(-4px); }
