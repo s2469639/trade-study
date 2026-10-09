@@ -141,12 +141,12 @@
   {% elif l2 == '학원' %}
     <path class="stroke chalk-draw" pathLength="1" d="M252 120 H350"/>
   {% endif %}
+  <g class="actor pl">
   <text class="anno" x="52" y="44">{{ you }}</text>
-  <path class="arrow" d="M70 52 L82 63 M82 63 L81 55 M82 63 L74 62"/>
+  <path class="arrow" d="M70 52 L82 63 M82 63 L81 55 M82 63 L74 62"/>{{ char(40, player_hat(), false, '', '', player_items()) }}</g>
+  <g class="actor me">
   <text class="anno" x="570" y="44">{{ other }}</text>
-  <path class="arrow" d="M552 52 L540 63 M540 63 L541 55 M540 63 L548 62"/>
-  <g class="actor pl">{{ char(40, player_hat(), false, '', '', player_items()) }}</g>
-  <g class="actor me">{{ char(480, '#4DABF7', true, 'right') }}</g>
+  <path class="arrow" d="M552 52 L540 63 M540 63 L541 55 M540 63 L548 62"/>{{ char(480, '#4DABF7', true, 'right') }}</g>
 </svg>
 {%- endmacro %}
 
