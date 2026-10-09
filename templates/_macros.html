@@ -81,7 +81,7 @@
 {% macro scene(l1, l2='', you='삐약이', other='파도 선배') -%}
 <svg class="scene" data-page="{{ l1 }}{{ l2 }}" viewBox="0 0 620 210" role="img" aria-label="{{ l1 }} {{ l2 }}">
   <path class="stroke" style="filter:url(#wobble2)" d="M8 190 C 120 186, 250 194, 360 190 S 540 187, 612 190"/>
-  <g class="prop-wrap"><rect x="222" y="30" width="176" height="160" fill="transparent"/><g class="prop-art" style="filter:url(#wobble)">
+  <g class="prop-move"><g class="prop-wrap"><rect x="222" y="30" width="176" height="160" fill="transparent"/><g class="prop-art" style="filter:url(#wobble)">
   {% if l1 == '산업' %}
     <path class="pf y" d="M240 190 V104 H300 V130 L340 104 V130 L380 104 V190 Z"/>
     <path class="pf b" d="M262 190 V150 H290 V190 Z"/>
@@ -126,13 +126,27 @@
     <path class="pf w" d="M304 66 V140 H256 Z"/>
     <path class="stroke" d="M310 50 L330 44 L310 38"/>
   {% endif %}
-  </g></g>
+  </g></g></g>
+  {# 장면별 움직이는 소품: 일하는 모습 #}
+  {% if l1 == '산업' %}
+    <g class="crate-run"><path class="pf y" d="M0 -22 h22 v22 h-22 z M0 -11 h22" transform="translate(262,186)"/></g>
+  {% elif l1 == '기업' %}
+    <g class="hook"><path class="stroke" d="M330 40 V60"/><path class="pf b" d="M318 60 h24 v18 h-24 z"/></g>
+  {% elif l1 == '신문사' %}
+    <g class="flyer"><path class="pf w" d="M0 0 h20 v26 h-20 z M4 7 h12 M4 13 h12 M4 19 h8" transform="translate(236,120)"/></g>
+  {% elif l1 == '글쓰기' %}
+    <path class="stroke scribble" pathLength="1" d="M110 178 q8 -10 16 0 t16 0 t16 0 t16 0"/>
+  {% elif l1 == '나의' %}
+    <g class="penrun"><path class="stroke" pathLength="1" d="M286 80 H350 M286 100 H350 M286 120 H336" /></g>
+  {% elif l2 == '학원' %}
+    <path class="stroke chalk-draw" pathLength="1" d="M252 120 H350"/>
+  {% endif %}
   <text class="anno" x="52" y="44">{{ you }}</text>
   <path class="arrow" d="M70 52 L82 63 M82 63 L81 55 M82 63 L74 62"/>
   <text class="anno" x="570" y="44">{{ other }}</text>
   <path class="arrow" d="M552 52 L540 63 M540 63 L541 55 M540 63 L548 62"/>
-  {{ char(40, player_hat(), false, '', '', player_items()) }}
-  {{ char(480, '#4DABF7', true, 'right') }}
+  <g class="actor pl">{{ char(40, player_hat(), false, '', '', player_items()) }}</g>
+  <g class="actor me">{{ char(480, '#4DABF7', true, 'right') }}</g>
 </svg>
 {%- endmacro %}
 

@@ -282,6 +282,13 @@ document.querySelectorAll("[data-count]").forEach((el) => {
     prop.addEventListener("animationend", () => prop.classList.remove("poke"));
   });
 
+  // 가만히 있어도 가끔 알아서 대화해요
+  if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    document.querySelectorAll(".scene .prop-wrap").forEach((p, i) => {
+      setTimeout(() => setInterval(() => { if (!document.hidden) p.dispatchEvent(new Event("click")); }, 11000), 3500 + i * 500);
+    });
+  }
+
   document.querySelectorAll(".scene .char").forEach((c) => {
     c.addEventListener("click", () => {
       c.classList.remove("hop"); void c.getBoundingClientRect(); c.classList.add("hop");

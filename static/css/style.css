@@ -785,3 +785,38 @@ input[type=number]:focus { background: #FFFDF0; box-shadow: 0 0 0 4px #BFE0FB; }
 @keyframes propPoke { 0% { transform: scale(1); } 30% { transform: scale(1.08,.92); } 60% { transform: scale(.96,1.06); } 100% { transform: scale(1); } }
 .scene .prop-wrap:hover .pf.y { fill: #FFE066; }
 .speech.alt { background: #A5D8FF; }
+
+/* 장면 속 졸라맨의 "하는 일" (페이지마다 다름) */
+.scene .actor, .scene .prop-move { transform-box: view-box; }
+@keyframes goPl { 0%,10% { transform: translateX(0); } 30%,62% { transform: translateX(var(--go,100px)); } 82%,100% { transform: translateX(0); } }
+@keyframes goMe { 0%,10% { transform: translateX(0); } 30%,62% { transform: translateX(var(--go,-100px)); } 82%,100% { transform: translateX(0); } }
+.scene .pl { animation: goPl 9s ease-in-out infinite; }
+.scene .me { animation: goMe 9s ease-in-out infinite; animation-delay: -4.5s; }
+.scene[data-page="산업섬"] .pl { --go: 30px; }
+.scene[data-page="산업섬"] .me { --go: -70px; }
+.scene[data-page="기업항구"] .pl { --go: 120px; }
+.scene[data-page="기업항구"] .me { animation: none; }
+.scene[data-page="무역학원"] .pl { animation: none; }
+.scene[data-page="무역학원"] .me { --go: -118px; animation-delay: 0s; }
+.scene[data-page="신문사"] .pl { --go: 30px; }
+.scene[data-page="신문사"] .me { --go: -40px; animation-delay: 0s; }
+.scene[data-page="글쓰기도서관"] .pl { --go: 110px; }
+.scene[data-page="글쓰기도서관"] .me { animation: none; }
+.scene[data-page="면접회관"] .pl { --go: 95px; animation-delay: 0s; }
+.scene[data-page="면접회관"] .me { --go: -95px; animation-delay: 0s; }
+.scene[data-page="나의일지"] .pl { --go: 118px; }
+.scene[data-page="나의일지"] .me { animation: none; }
+.scene[data-page="무역항구"] .pl { --go: 100px; }
+.scene[data-page="무역항구"] .me { animation: none; }
+@keyframes crateRun { 0%,8% { transform: translateX(0); opacity: 0; } 12% { opacity: 1; } 55% { transform: translateX(-120px); opacity: 1; } 62%,100% { transform: translateX(-120px); opacity: 0; } }
+.scene .crate-run { animation: crateRun 4.5s linear infinite; }
+@keyframes hookDown { 0%,100% { transform: translateY(0); } 50% { transform: translateY(70px); } }
+.scene .hook { animation: hookDown 5s ease-in-out infinite; }
+@keyframes flyPaper { 0% { transform: translate(0,0) rotate(0); opacity: 0; } 10% { opacity: 1; } 60% { transform: translate(-130px,-30px) rotate(-18deg); opacity: 1; } 100% { transform: translate(-150px,40px) rotate(-30deg); opacity: 0; } }
+.scene .flyer { animation: flyPaper 4.5s ease-in-out infinite; }
+@keyframes draw { 0% { stroke-dashoffset: 1; } 55%,85% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 1; } }
+.scene .scribble, .scene .chalk-draw, .scene .penrun .stroke { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 5s ease-in-out infinite; }
+.scene .chalk-draw { stroke: #fff; stroke-width: 3.4; }
+@keyframes sail { 0%,100% { transform: translateX(-14px) rotate(-1.5deg); } 50% { transform: translateX(14px) rotate(1.5deg); } }
+.scene[data-page="무역항구"] .prop-move { animation: sail 5s ease-in-out infinite; transform-origin: 310px 190px; }
+@media (prefers-reduced-motion: reduce) { .scene .pl, .scene .me, .scene .crate-run, .scene .hook, .scene .flyer, .scene .prop-move { animation: none !important; } }
