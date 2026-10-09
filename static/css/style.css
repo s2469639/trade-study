@@ -779,3 +779,9 @@ input[type=number]:focus { background: #FFFDF0; box-shadow: 0 0 0 4px #BFE0FB; }
 .map .town .hit { fill: transparent; pointer-events: all; }
 .map .town .bob { transform-box: fill-box; transform-origin: center bottom; transition: transform .25s ease-out; }
 .map .town:hover .bob { transform: translateY(-4px); }
+
+.scene .prop-wrap { cursor: pointer; transform-box: fill-box; transform-origin: 50% 100%; }
+.scene .prop-wrap.poke { animation: propPoke .5s var(--ease); }
+@keyframes propPoke { 0% { transform: scale(1); } 30% { transform: scale(1.08,.92); } 60% { transform: scale(.96,1.06); } 100% { transform: scale(1); } }
+.scene .prop-wrap:hover .pf.y { fill: #FFE066; }
+.speech.alt { background: #A5D8FF; }

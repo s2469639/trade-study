@@ -79,9 +79,9 @@
 
 {# 두 명의 캐릭터 + 가운데 회색 상자(제목)가 있는 장면. 캐릭터를 누르면 말풍선이 나와요 #}
 {% macro scene(l1, l2='', you='삐약이', other='파도 선배') -%}
-<svg class="scene" viewBox="0 0 620 210" role="img" aria-label="{{ l1 }} {{ l2 }}">
+<svg class="scene" data-page="{{ l1 }}{{ l2 }}" viewBox="0 0 620 210" role="img" aria-label="{{ l1 }} {{ l2 }}">
   <path class="stroke" style="filter:url(#wobble2)" d="M8 190 C 120 186, 250 194, 360 190 S 540 187, 612 190"/>
-  <g class="prop-art" style="filter:url(#wobble)">
+  <g class="prop-wrap"><rect x="222" y="30" width="176" height="160" fill="transparent"/><g class="prop-art" style="filter:url(#wobble)">
   {% if l1 == '산업' %}
     <path class="pf y" d="M240 190 V104 H300 V130 L340 104 V130 L380 104 V190 Z"/>
     <path class="pf b" d="M262 190 V150 H290 V190 Z"/>
@@ -126,7 +126,7 @@
     <path class="pf w" d="M304 66 V140 H256 Z"/>
     <path class="stroke" d="M310 50 L330 44 L310 38"/>
   {% endif %}
-  </g>
+  </g></g>
   <text class="anno" x="52" y="44">{{ you }}</text>
   <path class="arrow" d="M70 52 L82 63 M82 63 L81 55 M82 63 L74 62"/>
   <text class="anno" x="570" y="44">{{ other }}</text>
