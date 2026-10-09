@@ -47,6 +47,7 @@
   <div id="celebrate" class="celebrate" hidden></div>
   <script>window.CELEBRATE = {{ celebrate | tojson }};</script>
   <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/scenes.js') }}"></script>
   {% block scripts %}{% endblock %}
 </body>
 </html>

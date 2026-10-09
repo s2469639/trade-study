@@ -243,52 +243,6 @@ document.querySelectorAll("[data-count]").forEach((el) => {
 // ---------- 캐릭터: 누르면 폴짝 + 말풍선, 눈동자는 마우스를 따라감 ----------
 (function () {
   const lines = ["오늘도 한 줄!", "화이팅!", "FOB 기억나?", "수출은 타이밍!", "뉴스 하나만 더", "L/C 외웠어?", "잘하고 있어 :)", "면접 가보자!"];
-  // 페이지마다 소품을 누르면 파도 선배와 삐약이가 주고받는 대화
-  const talks = {
-    "산업섬": [["오늘은 어떤 산업이야?", "공장부터 둘러볼래요!"], ["밸류체인 알지?", "소재 - 부품 - 완제품이요!"]],
-    "기업항구": [["이 회사 뭐 파는지 알아?", "주력 제품 정리해 봤어요"], ["경쟁사도 봤어?", "비교표 만들어 둘게요"]],
-    "무역학원": [["FOB랑 CIF 차이는?", "운임·보험을 누가 내느냐요!"], ["L/C는?", "은행이 대금을 보증해요"]],
-    "신문사": [["오늘 기사 하나 읽자", "환율 기사요!"], ["그래서 수출에는?", "달러 강세면 유리해요"]],
-    "글쓰기도서관": [["지원동기 첫 문장은?", "숫자로 시작해 볼게요"], ["경험은 STAR로!", "상황-과제-행동-결과요"]],
-    "면접회관": [["1분 자기소개 해볼까?", "해외영업 지원한 삐약입니다!"], ["왜 우리 회사야?", "수출 비중이 커서요"]],
-    "나의일지": [["오늘 뭐 공부했어?", "인코텀즈 정리했어요"], ["내일은?", "뉴스 두 개 읽을래요"]],
-    "무역항구": [["출항 준비 됐어?", "돛 올렸어요!"], ["항로는 어디로?", "다음 섬으로 가요"]],
-  };
-  const say = (c, text, alt) => {
-    c.classList.remove("hop"); void c.getBoundingClientRect(); c.classList.add("hop");
-    const r = c.getBoundingClientRect();
-    const b = document.createElement("div");
-    b.className = "speech" + (alt ? " alt" : "");
-    b.textContent = text;
-    b.style.left = r.left + r.width / 2 + scrollX + "px";
-    b.style.top = r.top + scrollY - 34 + "px";
-    document.body.appendChild(b);
-    setTimeout(() => b.remove(), 1900);
-    burst(r.left + r.width / 2, r.top + 20, 8);
-  };
-  document.querySelectorAll(".scene").forEach((sc) => {
-    const prop = sc.querySelector(".prop-wrap"), set = talks[sc.dataset.page];
-    if (!prop || !set) return;
-    let n = 0, busy = false;
-    prop.addEventListener("click", () => {
-      if (busy) return;
-      busy = true;
-      prop.classList.remove("poke"); void prop.getBoundingClientRect(); prop.classList.add("poke");
-      const [q, a] = set[n++ % set.length], cs = sc.querySelectorAll(".char");
-      say(cs[1], q, true);
-      setTimeout(() => say(cs[0], a, false), 1000);
-      setTimeout(() => { busy = false; }, 2000);
-    });
-    prop.addEventListener("animationend", () => prop.classList.remove("poke"));
-  });
-
-  // 가만히 있어도 가끔 알아서 대화해요
-  if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    document.querySelectorAll(".scene .prop-wrap").forEach((p, i) => {
-      setTimeout(() => setInterval(() => { if (!document.hidden) p.dispatchEvent(new Event("click")); }, 11000), 3500 + i * 500);
-    });
-  }
-
   document.querySelectorAll(".scene .char").forEach((c) => {
     c.addEventListener("click", () => {
       c.classList.remove("hop"); void c.getBoundingClientRect(); c.classList.add("hop");

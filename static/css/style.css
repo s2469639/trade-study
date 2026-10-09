@@ -820,3 +820,8 @@ input[type=number]:focus { background: #FFFDF0; box-shadow: 0 0 0 4px #BFE0FB; }
 @keyframes sail { 0%,100% { transform: translateX(-14px) rotate(-1.5deg); } 50% { transform: translateX(14px) rotate(1.5deg); } }
 .scene[data-page="무역항구"] .prop-move { animation: sail 5s ease-in-out infinite; transform-origin: 310px 190px; }
 @media (prefers-reduced-motion: reduce) { .scene .pl, .scene .me, .scene .crate-run, .scene .hook, .scene .flyer, .scene .prop-move { animation: none !important; } }
+
+/* 이야기 장면: 예전 무의미한 반복 애니메이션 제거 (움직임은 scenes.js가 담당) */
+.scene .pl, .scene .me, .scene .crate-run, .scene .flyer, .scene .prop-move, .scene .hook { animation: none !important; }
+.scene .crate-run, .scene .flyer { display: none; }
+.scene .actor, .scene .prop-move, .scene .hook { transform-box: view-box; }
